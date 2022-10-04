@@ -34,13 +34,45 @@ ainterface.prototype.onStart = function() {
     var self = this;
 	var defer=libQ.defer();
 
-	var data = {"enabled":true,"setvolumescript":"/home/volumio/pi_hifi_ctrl/volume_script ","getvolumescript":"/home/volumio/pi_hifi_ctrl/volume_script","setmutescript":"/home/volumio/pi_hifi_ctrl/mute_script ","getmutescript":"/home/volumio/pi_hifi_ctrl/mute_script"};
+	self.loadAmpDefinitions()
+    //initialize list of serial devices available to the system
+    //update Volume Settings and announce the updated settings to Volumio
+    .then(_ => self.alsavolume(50))
+    .then(_ => self.updateVolumeSettings())
+	// Once the Plugin has successfull started resolve the promise
+    .then(function(){
+            self.logger.info('[ainterface] onStart: successfully started plugin');
+            defer.resolve();
+    })
+    .fail(err => {
+        self.logger.error('[ainterface] onStart: FAILED to start plugin: ' + err);
+        defer.reject(err);
+    })
+	self.commandRouter.volumioupdatevolume(self.getVolumeObject());
 
-	self.commandRouter.updateVolumeScripts(data);
 	// Once the Plugin has successfull started resolve the promise
 	defer.resolve();
 
     return defer.promise;
+};
+
+
+// Load Amp Definition file and initialize the list of Vendor/Amp for settings
+ainterface.prototype.loadAmpDefinitions = function() {
+    var self = this;
+
+    //var ampDefinitionFile = this.commandRouter.pluginManager.getConfigurationFile(this.context,'ampCommands.json');
+    //self.ampDefinitions = new(require('v-conf'))();
+    //self.ampDefinitions.loadFile(ampDefinitionFile);
+    //if (self.debugLogging) self.logger.info('[SERIALAMPCONTROLLER] loadAmpDefinitions: loaded AmpDefinitions: ' + JSON.stringify(self.ampDefinitions));
+    //Generate list of Amp Names as combination of Vendor + Model
+    //self.ampVendorModelList = [];
+    //for (var n = 0; n < self.ampDefinitions.data.amps.length; n++)
+   // {
+   //     self.ampVendorModelList.push(self.ampDefinitions.data.amps[n].vendor + ' - ' + self.ampDefinitions.data.amps[n].model);
+    //};
+    //if (self.debugLogging) self.logger.info('[SERIALAMPCONTROLLER] loadAmpDefinitions: loaded AmpDefinitions for ' + self.ampVendorModelList.length + ' Amplifiers.');
+    return libQ.resolve();
 };
 
 ainterface.prototype.onStop = function() {
@@ -271,3 +303,114 @@ ainterface.prototype.goto=function(data){
 
      return defer.promise;
 };
+
+
+
+
+
+
+
+//update the volumio Volume Settings, mainly makes this an Override plugin
+ainterface.prototype.updateVolumeSettings = function() {
+	var self = this;
+    var defer = libQ.defer();
+
+    //Prepare the data for updating the Volume Settings
+    //first read the audio-device information, since we won't configure this 
+        var volSettingsData = {
+            'pluginType': 'audio_interface',
+            'pluginName': 'ainterface',
+            'volumeOverride': true
+        };
+        volSettingsData.device = self.commandRouter.executeOnPlugin('audio_interface', 'alsa_controller', 'getConfigParam', 'outputdevice');
+        volSettingsData.name = self.commandRouter.executeOnPlugin('audio_interface', 'alsa_controller', 'getAlsaCards', '')[volSettingsData.device].name;
+        volSettingsData.devicename = 'CXA80_JJ';
+        volSettingsData.mixer = 'CXA80_J3';
+        volSettingsData.maxvolume = 100;
+        volSettingsData.volumecurve = '';
+        volSettingsData.volumesteps = 1;
+        volSettingsData.currentmute = 0;
+        self.commandRouter.volumioUpdateVolumeSettings(volSettingsData)
+        .then(resp => {
+            self.logger.info("[ainterface] updateVolumeSettings: " + JSON.stringify(volSettingsData + ' ' + resp));
+            defer.resolve();
+        })
+        .fail(err => {
+            self.logger.error("[ainterface] updateVolumeSettings: volumioUpdateVolumeSettings failed:" + err );
+            defer.reject(err);
+        })
+    return defer.promise;
+};
+
+
+//override the alsavolume function to send volume commands to the amp
+ainterface.prototype.alsavolume = function (VolumeInteger) {
+	var self = this;
+    var defer = libQ.defer();
+    
+    self.logger.info('[ainterface] alsavolume: Set volume "' + VolumeInteger + '"');
+        switch (VolumeInteger) {
+            case 'mute':
+            // Mute
+                     self.logger.info('[SERIALAMPCONTROLLER] alsavolume: send dedicated muteOn.');
+                    //defer.resolve(self.waitForAcknowledge('mute'));
+                    self.sendCommand('muteOn');
+                
+                break;
+            case 'unmute':
+            // Unmute (inverse of mute)
+                    if (self.debugLogging) self.logger.info('[SERIALAMPCONTROLLER] alsavolume: send dedicated muteOff.');
+                    defer.resolve(self.waitForAcknowledge('mute'));
+                    self.sendCommand('muteOff');
+                break;
+            case 'toggle':
+            // Toggle mute
+                self.logger.info('[SERIALAMPCONTROLLER] alsavolume: send muteToggle.');
+                self.sendCommand('muteToggle');
+                break;
+            case '+':
+            	self.logger.info('[SERIALAMPCONTROLLER] alsavolume: increase volume by single step.');
+               self.sendCommand('volUp');
+                break;
+            case '-':
+				self.logger.info('[SERIALAMPCONTROLLER] alsavolume: decrease volume by single step.');
+				self.sendCommand('volDown');
+            break;
+            default:
+            //set volume to integer
+                self.logger.info('[SERIALAMPCONTROLLER] alsavolume: set volume to integer value.');
+                if (VolumeInteger>50) {
+					self.sendCommand('volUp');
+                } else if (VolumeInteger<50){
+					self.sendCommand('volDowm');
+                }
+                break;   
+        };
+        defer.resolve();
+    return defer.promise;
+};
+
+
+ainterface.prototype.getVolumeObject = function() {
+	// returns the current amplifier settings in an object that volumio can use
+		var volume = {};
+		var self = this;
+	
+		volume.mute = 0;
+		volume.vol=50;
+		volume.disableVolumeControl = false;
+		if (self.debugLogging) self.logger.info('[SERIALAMPCONTROLLER] getVolumeObject: ' + JSON.stringify(volume));
+	
+		return volume;
+	};
+	
+	ainterface.prototype.volumioupdatevolume = function() {
+		var self = this;
+		return self.commandRouter.volumioupdatevolume(self.getVolumeObject());
+	};
+	
+	ainterface.prototype.retrievevolume = function () {
+		var self = this;
+		return self.getVolumeObject();
+	}
+	
