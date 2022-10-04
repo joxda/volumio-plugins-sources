@@ -34,6 +34,7 @@ cantrol.prototype.onStart = function() {
     var self = this;
 	var defer=libQ.defer();
 
+
 	self.loadAmpDefinitions()
     //initialize list of serial devices available to the system
     //update Volume Settings and announce the updated settings to Volumio
@@ -92,6 +93,52 @@ cantrol.prototype.onRestart = function() {
     // Optional, use if you need it
 };
 
+
+	//send commands to the amp
+    cantrol.prototype.sendCommand  = function(...cmd) {
+        var self = this;
+        var defer = libQ.defer();
+    
+        var cmdString = '';
+        self.logger.info("[cantrol] sendCommand: send " + cmd);
+        switch (cmd[0]) {
+            case  "powerOn": 
+                cmdString = "Power_On";
+                break;
+            case  "powerToggle": 
+                cmdString = "Power_Toggle";
+                break;
+            case  "volUp": 
+                cmdString = "Volume_Up"
+                break;
+            case  "volDown": 
+                cmdString = "Volume_Down";
+                break;
+            case  "muteToggle": 
+                cmdString = "Mute_Toggle"
+                break;
+            case  "muteOn": 
+                cmdString = "Mute_On";
+                break;
+            case  "muteOff": 
+                cmdString = "Mute_Off";
+                break;
+            //case  "source": 
+                // cmdString = cmdString + self.selectedAmp.commands.source;
+                // var count = (cmdString.match(/#/g) || []).length;
+              //  cmdString =  self.selectedAmp.sourceCmd[self.selectedAmp.sources.indexOf(cmd[1])];
+                //break;
+            default:
+                break;
+        }
+        execSync('/usr/bin/python /home/volumio/pi_hifi_ctrl/ca_amp_ctrl.py '+cmdString, { uid: 1000, gid: 1000, encoding: 'utf8' });
+    
+                defer.resolve();
+    
+        return defer.promise;
+    }
+    
+    
 
 // Configuration Methods -----------------------------------------------------------------------------
 
@@ -358,8 +405,7 @@ cantrol.prototype.alsavolume = function (VolumeInteger) {
                 break;
             case 'unmute':
             // Unmute (inverse of mute)
-                    if (self.debugLogging) self.logger.info('[SERIALAMPCONTROLLER] alsavolume: send dedicated muteOff.');
-                    defer.resolve(self.waitForAcknowledge('mute'));
+                    self.logger.info('[SERIALAMPCONTROLLER] alsavolume: send dedicated muteOff.');
                     self.sendCommand('muteOff');
                 break;
             case 'toggle':
@@ -398,7 +444,7 @@ cantrol.prototype.getVolumeObject = function() {
 		volume.mute = 0;
 		volume.vol=50;
 		volume.disableVolumeControl = false;
-		if (self.debugLogging) self.logger.info('[SERIALAMPCONTROLLER] getVolumeObject: ' + JSON.stringify(volume));
+		self.logger.info('[SERIALAMPCONTROLLER] getVolumeObject: ' + JSON.stringify(volume));
 	
 		return volume;
 	};
@@ -413,48 +459,3 @@ cantrol.prototype.getVolumeObject = function() {
 		return self.getVolumeObject();
 	}
 	
-
-	//send commands to the amp
-cantrol.prototype.sendCommand  = function(...cmd) {
-    var self = this;
-    var defer = libQ.defer();
-
-    var cmdString = '';
-    self.logger.info("[cantrol] sendCommand: send " + cmd);
-    switch (cmd[0]) {
-        case  "powerOn": 
-            cmdString = "Power_On";
-            break;
-        case  "powerToggle": 
-            cmdString = "Power_Toggle";
-            break;
-        case  "volUp": 
-            cmdString = "Volume_Up"
-            break;
-        case  "volDown": 
-            cmdString = "Volume_Down";
-            break;
-        case  "muteToggle": 
-            cmdString = "Mute_Toggle"
-            break;
-        case  "muteOn": 
-            cmdString = "Mute_On";
-            break;
-        case  "muteOff": 
-            cmdString = "Mute_Off";
-            break;
-        //case  "source": 
-            // cmdString = cmdString + self.selectedAmp.commands.source;
-            // var count = (cmdString.match(/#/g) || []).length;
-          //  cmdString =  self.selectedAmp.sourceCmd[self.selectedAmp.sources.indexOf(cmd[1])];
-            //break;
-        default:
-            break;
-    }
-	execSync('/usr/bin/python /home/volumio/pi_hifi_ctrl/ca_amp_ctrl.py '+cmdString, { uid: 1000, gid: 1000, encoding: 'utf8' });
-
-            defer.resolve();
-
-    return defer.promise;
-}
-
