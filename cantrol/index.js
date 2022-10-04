@@ -7,8 +7,8 @@ var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 
 
-module.exports = ainterface;
-function ainterface(context) {
+module.exports = cantrol;
+function cantrol(context) {
 	var self = this;
 
 	this.context = context;
@@ -20,7 +20,7 @@ function ainterface(context) {
 
 
 
-ainterface.prototype.onVolumioStart = function()
+cantrol.prototype.onVolumioStart = function()
 {
 	var self = this;
 	var configFile=this.commandRouter.pluginManager.getConfigurationFile(this.context,'config.json');
@@ -30,7 +30,7 @@ ainterface.prototype.onVolumioStart = function()
     return libQ.resolve();
 }
 
-ainterface.prototype.onStart = function() {
+cantrol.prototype.onStart = function() {
     var self = this;
 	var defer=libQ.defer();
 
@@ -41,11 +41,11 @@ ainterface.prototype.onStart = function() {
     .then(_ => self.updateVolumeSettings())
 	// Once the Plugin has successfull started resolve the promise
     .then(function(){
-            self.logger.info('[ainterface] onStart: successfully started plugin');
+            self.logger.info('[cantrol] onStart: successfully started plugin');
             defer.resolve();
     })
     .fail(err => {
-        self.logger.error('[ainterface] onStart: FAILED to start plugin: ' + err);
+        self.logger.error('[cantrol] onStart: FAILED to start plugin: ' + err);
         defer.reject(err);
     })
 	// self.commandRouter.volumioupdatevolume(self.getVolumeObject());
@@ -58,7 +58,7 @@ ainterface.prototype.onStart = function() {
 
 
 // Load Amp Definition file and initialize the list of Vendor/Amp for settings
-ainterface.prototype.loadAmpDefinitions = function() {
+cantrol.prototype.loadAmpDefinitions = function() {
     var self = this;
 
     //var ampDefinitionFile = this.commandRouter.pluginManager.getConfigurationFile(this.context,'ampCommands.json');
@@ -75,7 +75,7 @@ ainterface.prototype.loadAmpDefinitions = function() {
     return libQ.resolve();
 };
 
-ainterface.prototype.onStop = function() {
+cantrol.prototype.onStop = function() {
     var self = this;
     var defer=libQ.defer();
 
@@ -89,7 +89,7 @@ self.commandRouter.updateVolumeScripts(data);
     return libQ.resolve();
 };
 
-ainterface.prototype.onRestart = function() {
+cantrol.prototype.onRestart = function() {
     var self = this;
     // Optional, use if you need it
 };
@@ -97,7 +97,7 @@ ainterface.prototype.onRestart = function() {
 
 // Configuration Methods -----------------------------------------------------------------------------
 
-ainterface.prototype.getUIConfig = function() {
+cantrol.prototype.getUIConfig = function() {
     var defer = libQ.defer();
     var self = this;
 
@@ -120,21 +120,21 @@ ainterface.prototype.getUIConfig = function() {
     return defer.promise;
 };
 
-ainterface.prototype.getConfigurationFiles = function() {
+cantrol.prototype.getConfigurationFiles = function() {
 	return ['config.json'];
 }
 
-ainterface.prototype.setUIConfig = function(data) {
+cantrol.prototype.setUIConfig = function(data) {
 	var self = this;
 	//Perform your installation tasks here
 };
 
-ainterface.prototype.getConf = function(varName) {
+cantrol.prototype.getConf = function(varName) {
 	var self = this;
 	//Perform your installation tasks here
 };
 
-ainterface.prototype.setConf = function(varName, varValue) {
+cantrol.prototype.setConf = function(varName, varValue) {
 	var self = this;
 	//Perform your installation tasks here
 };
@@ -145,14 +145,14 @@ ainterface.prototype.setConf = function(varName, varValue) {
 // If your plugin is not a music_sevice don't use this part and delete it
 
 
-ainterface.prototype.addToBrowseSources = function () {
+cantrol.prototype.addToBrowseSources = function () {
 
 	// Use this function to add your music service plugin to music sources
     //var data = {name: 'Spotify', uri: 'spotify',plugin_type:'music_service',plugin_name:'spop'};
     this.commandRouter.volumioAddToBrowseSources(data);
 };
 
-ainterface.prototype.handleBrowseUri = function (curUri) {
+cantrol.prototype.handleBrowseUri = function (curUri) {
     var self = this;
 
     //self.commandRouter.logger.info(curUri);
@@ -165,63 +165,63 @@ ainterface.prototype.handleBrowseUri = function (curUri) {
 
 
 // Define a method to clear, add, and play an array of tracks
-ainterface.prototype.clearAddPlayTrack = function(track) {
+cantrol.prototype.clearAddPlayTrack = function(track) {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'ainterface::clearAddPlayTrack');
+	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrol::clearAddPlayTrack');
 
 	self.commandRouter.logger.info(JSON.stringify(track));
 
 	return self.sendSpopCommand('uplay', [track.uri]);
 };
 
-ainterface.prototype.seek = function (timepos) {
-    this.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'ainterface::seek to ' + timepos);
+cantrol.prototype.seek = function (timepos) {
+    this.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrol::seek to ' + timepos);
 
     return this.sendSpopCommand('seek '+timepos, []);
 };
 
 // Stop
-ainterface.prototype.stop = function() {
+cantrol.prototype.stop = function() {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'ainterface::stop');
+	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrol::stop');
 
 
 };
 
 // Spop pause
-ainterface.prototype.pause = function() {
+cantrol.prototype.pause = function() {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'ainterface::pause');
+	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrol::pause');
 
 
 };
 
 // Get state
-ainterface.prototype.getState = function() {
+cantrol.prototype.getState = function() {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'ainterface::getState');
+	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrol::getState');
 
 
 };
 
 //Parse state
-ainterface.prototype.parseState = function(sState) {
+cantrol.prototype.parseState = function(sState) {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'ainterface::parseState');
+	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrol::parseState');
 
 	//Use this method to parse the state and eventually send it with the following function
 };
 
 // Announce updated State
-ainterface.prototype.pushState = function(state) {
+cantrol.prototype.pushState = function(state) {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'ainterface::pushState');
+	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrol::pushState');
 
 	return self.commandRouter.servicePushState(state, self.servicename);
 };
 
 
-ainterface.prototype.explodeUri = function(uri) {
+cantrol.prototype.explodeUri = function(uri) {
 	var self = this;
 	var defer=libQ.defer();
 
@@ -230,7 +230,7 @@ ainterface.prototype.explodeUri = function(uri) {
 	return defer.promise;
 };
 
-ainterface.prototype.getAlbumArt = function (data, path) {
+cantrol.prototype.getAlbumArt = function (data, path) {
 
 	var artist, album;
 
@@ -269,7 +269,7 @@ ainterface.prototype.getAlbumArt = function (data, path) {
 
 
 
-ainterface.prototype.search = function (query) {
+cantrol.prototype.search = function (query) {
 	var self=this;
 	var defer=libQ.defer();
 
@@ -278,24 +278,24 @@ ainterface.prototype.search = function (query) {
 	return defer.promise;
 };
 
-ainterface.prototype._searchArtists = function (results) {
+cantrol.prototype._searchArtists = function (results) {
 
 };
 
-ainterface.prototype._searchAlbums = function (results) {
+cantrol.prototype._searchAlbums = function (results) {
 
 };
 
-ainterface.prototype._searchPlaylists = function (results) {
+cantrol.prototype._searchPlaylists = function (results) {
 
 
 };
 
-ainterface.prototype._searchTracks = function (results) {
+cantrol.prototype._searchTracks = function (results) {
 
 };
 
-ainterface.prototype.goto=function(data){
+cantrol.prototype.goto=function(data){
     var self=this
     var defer=libQ.defer()
 
@@ -311,7 +311,7 @@ ainterface.prototype.goto=function(data){
 
 
 //update the volumio Volume Settings, mainly makes this an Override plugin
-ainterface.prototype.updateVolumeSettings = function() {
+cantrol.prototype.updateVolumeSettings = function() {
 	var self = this;
     var defer = libQ.defer();
 
@@ -319,7 +319,7 @@ ainterface.prototype.updateVolumeSettings = function() {
     //first read the audio-device information, since we won't configure this 
         var volSettingsData = {
             'pluginType': 'system_controller',
-            'pluginName': 'ainterface',
+            'pluginName': 'cantrol',
             'volumeOverride': true
         };
         volSettingsData.device = self.commandRouter.executeOnPlugin('system_controller', 'alsa_controller', 'getConfigParam', 'outputdevice');
@@ -333,11 +333,11 @@ ainterface.prototype.updateVolumeSettings = function() {
         volSettingsData.currentmute = 0;
         self.commandRouter.volumioUpdateVolumeSettings(volSettingsData)
         .then(resp => {
-            self.logger.info("[ainterface] updateVolumeSettings: " + JSON.stringify(volSettingsData + ' ' + resp));
+            self.logger.info("[cantrol] updateVolumeSettings: " + JSON.stringify(volSettingsData + ' ' + resp));
             defer.resolve();
         })
         .fail(err => {
-            self.logger.error("[ainterface] updateVolumeSettings: volumioUpdateVolumeSettings failed:" + err );
+            self.logger.error("[cantrol] updateVolumeSettings: volumioUpdateVolumeSettings failed:" + err );
             defer.reject(err);
         })
     return defer.promise;
@@ -345,11 +345,11 @@ ainterface.prototype.updateVolumeSettings = function() {
 
 
 //override the alsavolume function to send volume commands to the amp
-ainterface.prototype.alsavolume = function (VolumeInteger) {
+cantrol.prototype.alsavolume = function (VolumeInteger) {
 	var self = this;
     var defer = libQ.defer();
     
-    self.logger.info('[ainterface] alsavolume: Set volume "' + VolumeInteger + '"');
+    self.logger.info('[cantrol] alsavolume: Set volume "' + VolumeInteger + '"');
         switch (VolumeInteger) {
             case 'mute':
             // Mute
@@ -392,7 +392,7 @@ ainterface.prototype.alsavolume = function (VolumeInteger) {
 };
 
 
-ainterface.prototype.getVolumeObject = function() {
+cantrol.prototype.getVolumeObject = function() {
 	// returns the current amplifier settings in an object that volumio can use
 		var volume = {};
 		var self = this;
@@ -405,24 +405,24 @@ ainterface.prototype.getVolumeObject = function() {
 		return volume;
 	};
 	
-	ainterface.prototype.volumioupdatevolume = function() {
+	cantrol.prototype.volumioupdatevolume = function() {
 		var self = this;
 		return self.commandRouter.volumioupdatevolume(self.getVolumeObject());
 	};
 	
-	ainterface.prototype.retrievevolume = function () {
+	cantrol.prototype.retrievevolume = function () {
 		var self = this;
 		return self.getVolumeObject();
 	}
 	
 
 	//send commands to the amp
-ainterface.prototype.sendCommand  = function(...cmd) {
+cantrol.prototype.sendCommand  = function(...cmd) {
     var self = this;
     var defer = libQ.defer();
 
     var cmdString = '';
-    self.logger.info("[ainterface] sendCommand: send " + cmd);
+    self.logger.info("[cantrol] sendCommand: send " + cmd);
     switch (cmd[0]) {
         case  "powerOn": 
             cmdString = "Power_On";
