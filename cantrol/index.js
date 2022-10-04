@@ -51,8 +51,7 @@ cantrol.prototype.onStart = function() {
 	// self.commandRouter.volumioupdatevolume(self.getVolumeObject());
 
 	// Once the Plugin has successfull started resolve the promise
-	defer.resolve();
-
+	
     return defer.promise;
 };
 
@@ -85,8 +84,7 @@ self.commandRouter.updateVolumeScripts(data);
 
     // Once the Plugin has successfull stopped resolve the promise
     defer.resolve();
-
-    return libQ.resolve();
+    return defer.promise;
 };
 
 cantrol.prototype.onRestart = function() {
@@ -322,7 +320,7 @@ cantrol.prototype.updateVolumeSettings = function() {
             'pluginName': 'cantrol',
             'volumeOverride': true
         };
-        volSettingsData.device = self.commandRouter.executeOnPlugin('system_controller', 'alsa_controller', 'getConfigParam', 'outputdevice');
+        volSettingsData.device = self.commandRouter.executeOnPlugin('audio_interface', 'alsa_controller', 'getConfigParam', 'outputdevice');
         volSettingsData.name = "testi";
 //self.commandRouter.executeOnPlugin('audio_interface', 'alsa_controller', 'getAlsaCards', '')[volSettingsData.device].name;
         volSettingsData.devicename = 'CXA80_JJ';
