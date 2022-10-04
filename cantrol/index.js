@@ -79,8 +79,8 @@ cantrol.prototype.onStop = function() {
     var self = this;
     var defer=libQ.defer();
 
-var data = { enabled: false, setvolumescript: '', getvolumescript: '' };
-self.commandRouter.updateVolumeScripts(data);
+//var data = { enabled: false, setvolumescript: '', getvolumescript: '' };
+//self.commandRouter.updateVolumeScripts(data);
 
 
     // Once the Plugin has successfull stopped resolve the promise
@@ -377,14 +377,14 @@ cantrol.prototype.updateVolumeSettings = function() {
         volSettingsData.volumesteps = 1;
         volSettingsData.currentmute = 0;
         self.commandRouter.volumioUpdateVolumeSettings(volSettingsData)
-        .then(resp => {
-            self.logger.info("[cantrol] updateVolumeSettings: " + JSON.stringify(volSettingsData + ' ' + resp));
+        //.then(resp => {
+        //    self.logger.info("[cantrol] updateVolumeSettings: " + JSON.stringify(volSettingsData + ' ' + resp));
             defer.resolve();
-        })
-        .fail(err => {
-            self.logger.error("[cantrol] updateVolumeSettings: volumioUpdateVolumeSettings failed:" + err );
-            defer.reject(err);
-        })
+        //})
+        //.fail(err => {
+        //    self.logger.error("[cantrol] updateVolumeSettings: volumioUpdateVolumeSettings failed:" + err );
+        //    defer.reject(err);
+        //})
     return defer.promise;
 };
 
@@ -393,7 +393,7 @@ cantrol.prototype.updateVolumeSettings = function() {
 cantrol.prototype.alsavolume = function (VolumeInteger) {
 	var self = this;
     var defer = libQ.defer();
-    
+    self.commandRouter.volumioupdatevolume(self.getVolumeObject());
     self.logger.info('[cantrol] alsavolume: Set volume "' + VolumeInteger + '"');
         switch (VolumeInteger) {
             case 'mute':
@@ -427,7 +427,7 @@ cantrol.prototype.alsavolume = function (VolumeInteger) {
                 if (VolumeInteger>50) {
 					self.sendCommand('volUp');
                 } else if (VolumeInteger<50){
-					self.sendCommand('volDowm');
+					self.sendCommand('volDown');
                 }
                 break;   
         };
