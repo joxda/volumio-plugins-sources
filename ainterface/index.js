@@ -414,3 +414,48 @@ ainterface.prototype.getVolumeObject = function() {
 		return self.getVolumeObject();
 	}
 	
+
+	//send commands to the amp
+ainterface.prototype.sendCommand  = function(...cmd) {
+    var self = this;
+    var defer = libQ.defer();
+
+    var cmdString = '';
+    self.logger.info("[ainterface] sendCommand: send " + cmd);
+    switch (cmd[0]) {
+        case  "powerOn": 
+            cmdString = "Power_On";
+            break;
+        case  "powerToggle": 
+            cmdString = "Power_Toggle";
+            break;
+        case  "volUp": 
+            cmdString = "Volume_Up"
+            break;
+        case  "volDown": 
+            cmdString = "Volume_Down";
+            break;
+        case  "muteToggle": 
+            cmdString = "Mute_Toggle"
+            break;
+        case  "muteOn": 
+            cmdString = "Mute_On";
+            break;
+        case  "muteOff": 
+            cmdString = "Mute_Off";
+            break;
+        //case  "source": 
+            // cmdString = cmdString + self.selectedAmp.commands.source;
+            // var count = (cmdString.match(/#/g) || []).length;
+          //  cmdString =  self.selectedAmp.sourceCmd[self.selectedAmp.sources.indexOf(cmd[1])];
+            //break;
+        default:
+            break;
+    }
+	execSync('/usr/bin/python /home/volumio/pi_hifi_ctrl/ca_amp_ctrl.py '+cmdString, { uid: 1000, gid: 1000, encoding: 'utf8' });
+
+            defer.resolve();
+
+    return defer.promise;
+}
+
