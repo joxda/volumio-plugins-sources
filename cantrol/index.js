@@ -15,7 +15,30 @@ function cantrol(context) {
 	this.commandRouter = this.context.coreCommand;
 	this.logger = this.context.logger;
 	this.configManager = this.context.configManager;
-
+    
+    this.debug = true;
+    // Setup Debugger
+    self.logger.CAdebug = function(data, level) {
+        if(self.debug)
+        {
+        switch (level) {
+            case "info":
+                self.logger.info('[CAntrol Debug] ' + data);
+                break;
+            case "warn":
+                self.logger.warn('[CAntrol Debug] ' + data);
+                break;
+            case "debug":
+                self.logger.debug('[CAntrol Debug] ' + data);
+            default:
+                break;
+            }
+        };
+        if (level == "error")
+        {
+            self.logger.error('[CAntrol Debug] ' + data);
+        }
+    }
 }
 
 
@@ -42,11 +65,11 @@ cantrol.prototype.onStart = function() {
     .then(_ => self.updateVolumeSettings())
 	// Once the Plugin has successfull started resolve the promise
     .then(function(){
-            self.logger.info('[cantrol] onStart: successfully started plugin');
+            self.logger.CAdebug('onStart: successfully started plugin','info');
             defer.resolve();
     })
     .fail(err => {
-        self.logger.error('[cantrol] onStart: FAILED to start plugin: ' + err);
+        self.logger.CAdebug(err,'error');
         defer.reject(err);
     })
 	// self.commandRouter.volumioupdatevolume(self.getVolumeObject());
@@ -100,7 +123,7 @@ cantrol.prototype.onRestart = function() {
         var defer = libQ.defer();
     
         var cmdString = '';
-        self.logger.info("[cantrol] sendCommand: send " + cmd);
+        self.logger.CAdebug("sendCommand: send " + cmd,'info');
         switch (cmd[0]) {
             case  "powerOn": 
                 cmdString = "Power_On";
@@ -153,8 +176,6 @@ cantrol.prototype.getUIConfig = function() {
         __dirname + '/UIConfig.json')
         .then(function(uiconf)
         {
-
-
             defer.resolve(uiconf);
         })
         .fail(function()
@@ -398,32 +419,32 @@ cantrol.prototype.alsavolume = function (VolumeInteger) {
         switch (VolumeInteger) {
             case 'mute':
             // Mute
-                     self.logger.info('[SERIALAMPCONTROLLER] alsavolume: send dedicated muteOn.');
+                     self.logger.CAdebug('alsavolume: send dedicated muteOn.','debug');
                     //defer.resolve(self.waitForAcknowledge('mute'));
                     self.sendCommand('muteOn');
                 
                 break;
             case 'unmute':
             // Unmute (inverse of mute)
-                    self.logger.info('[SERIALAMPCONTROLLER] alsavolume: send dedicated muteOff.');
+                    self.logger.CAdebug('alsavolume: send dedicated muteOff.','debug');
                     self.sendCommand('muteOff');
                 break;
             case 'toggle':
             // Toggle mute
-                self.logger.info('[SERIALAMPCONTROLLER] alsavolume: send muteToggle.');
+                self.logger.CAdebug('alsavolume: send muteToggle.','debug');
                 self.sendCommand('muteToggle');
                 break;
             case '+':
-            	self.logger.info('[SERIALAMPCONTROLLER] alsavolume: increase volume by single step.');
+            	self.logger.CAdebug('alsavolume: increase volume by single step.','debug');
                self.sendCommand('volUp');
                 break;
             case '-':
-				self.logger.info('[SERIALAMPCONTROLLER] alsavolume: decrease volume by single step.');
+				self.logger.CAdebug('alsavolume: decrease volume by single step.','debug');
 				self.sendCommand('volDown');
             break;
             default:
             //set volume to integer
-                self.logger.info('[SERIALAMPCONTROLLER] alsavolume: set volume to integer value.');
+                self.logger.CAdebug('alsavolume: set volume to integer value.','debug');
                 if (VolumeInteger>50) {
 					self.sendCommand('volUp');
                 } else if (VolumeInteger<50){
@@ -444,7 +465,7 @@ cantrol.prototype.getVolumeObject = function() {
 		volume.mute = 0;
 		volume.vol=50;
 		volume.disableVolumeControl = false;
-		self.logger.info('[SERIALAMPCONTROLLER] getVolumeObject: ' + JSON.stringify(volume));
+		self.logger.CAdebug('getVolumeObject: ' + JSON.stringify(volume),'info');
 	
 		return volume;
 	};
@@ -459,3 +480,11 @@ cantrol.prototype.getVolumeObject = function() {
 		return self.getVolumeObject();
 	}
 	
+// a pushState event has happened. Check whether it differs from the last known status and
+// switch output port on or off respectively
+cantrol.prototype.parseStatus = function(state) {	
+    self.logger.CAdebug("State changed to: " + state.status,'info');
+    if((state.status!='pause' && state.status!='stop')){
+        self.sendCommand('powerOn')
+    } 
+};
