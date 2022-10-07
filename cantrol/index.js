@@ -6,6 +6,11 @@ var config = new (require('v-conf'))();
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
 
+var io = require('socket.io-client');
+var socket = io.connect('http://localhost:3000');
+//declare global status variable
+var status = 'na';
+
 
 module.exports = cantrol;
 function cantrol(context) {
@@ -74,8 +79,17 @@ cantrol.prototype.onStart = function() {
     })
 	// self.commandRouter.volumioupdatevolume(self.getVolumeObject());
 
+
+    // read and parse status once
+    socket.emit('getState','');
+    socket.once('pushState', self.parseStatus.bind(self));
+
+    // listen to every subsequent status report from Volumio
+    // status is pushed after every playback action, so we will be
+    // notified if the status changes
+    socket.on('pushState', self.parseStatus.bind(self));
+
 	// Once the Plugin has successfull started resolve the promise
-	
     return defer.promise;
 };
 
@@ -483,8 +497,13 @@ cantrol.prototype.getVolumeObject = function() {
 // a pushState event has happened. Check whether it differs from the last known status and
 // switch output port on or off respectively
 cantrol.prototype.parseStatus = function(state) {	
-    self.logger.CAdebug("State changed to: " + state.status,'info');
+var self = this;    
+self.logger.CAdebug("State changed to: " + state.status,'info');
     if((state.status!='pause' && state.status!='stop')){
         self.sendCommand('powerOn')
     } 
 };
+
+
+
+ 
