@@ -6,11 +6,11 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
-	"author": "Volumio Team",
+	"author": "J3",
 	"license": "ISC",
-	"repository": "https://github.com/yourname/yourrepo",
+	"repository": "https://github.com/joxda/volumio-plugin-sources",
 	"volumio_info": {
-		"prettyName": "cantrol",
+		"prettyName": "CAntrol",
 		"icon": "fa-lightbulb-o",
 		"plugin_type": "system_controller",
 		"architectures": [
@@ -32,6 +32,7 @@
 		"fs-extra": "^0.28.0",
 		"kew": "^0.7.0",
 		"socket.io-client": "^1.7.4",
-		"v-conf": "^1.4.0"
+		"v-conf": "^1.4.0",
+		"pigpio": "^3.3.1"
 	}
 }

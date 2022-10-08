@@ -10,6 +10,8 @@ var io = require('socket.io-client');
 var socket = io.connect('http://localhost:3000');
 //declare global status variable
 var status = 'na';
+const pigpio = require('pigpio');
+const Gpio = pigpio.Gpio;
 
 
 module.exports = cantrol;
@@ -46,8 +48,6 @@ function cantrol(context) {
     }
 }
 
-
-
 cantrol.prototype.onVolumioStart = function()
 {
 	var self = this;
@@ -61,8 +61,12 @@ cantrol.prototype.onVolumioStart = function()
 cantrol.prototype.onStart = function() {
     var self = this;
 	var defer=libQ.defer();
-
-
+    var self.control = true;
+    var self.RA5_del = 889
+    var self.outPin = 17;
+    var self.output = new Gpio(self.outPin, {mode: Gpio.OUTPUT});
+    self.output.digitalWrite(0);
+    
 	self.loadAmpDefinitions()
     //initialize list of serial devices available to the system
     //update Volume Settings and announce the updated settings to Volumio
@@ -138,27 +142,30 @@ cantrol.prototype.onRestart = function() {
     
         var cmdString = '';
         self.logger.CAdebug("sendCommand: send " + cmd,'info');
+
+        let dev = 16;
+
         switch (cmd[0]) {
             case  "powerOn": 
-                cmdString = "Power_On";
+                cmdString = self.rc5(dev,14);
                 break;
             case  "powerToggle": 
-                cmdString = "Power_Toggle";
+                cmdString = self.rc5(dev,12);
                 break;
             case  "volUp": 
-                cmdString = "Volume_Up"
+                cmdString = self.rc5(dev,16);
                 break;
             case  "volDown": 
-                cmdString = "Volume_Down";
+                cmdString = self.rc5(dev,17);
                 break;
             case  "muteToggle": 
-                cmdString = "Mute_Toggle"
+                cmdString = self.rc5(dev,13);
                 break;
             case  "muteOn": 
-                cmdString = "Mute_On";
+                cmdString = self.rc5(dev,50);
                 break;
             case  "muteOff": 
-                cmdString = "Mute_Off";
+                cmdString = self.rc5(dev,51);
                 break;
             //case  "source": 
                 // cmdString = cmdString + self.selectedAmp.commands.source;
@@ -168,9 +175,11 @@ cantrol.prototype.onRestart = function() {
             default:
                 break;
         }
-        execSync('/usr/bin/python /home/volumio/pi_hifi_ctrl/ca_amp_ctrl.py '+cmdString, { uid: 1000, gid: 1000, encoding: 'utf8' });
+        //execSync('/usr/bin/python /home/volumio/pi_hifi_ctrl/ca_amp_ctrl.py '+cmdString, { uid: 1000, gid: 1000, encoding: 'utf8' });
     
-                defer.resolve();
+        self.sendRc5(cmdStr);
+
+        defer.resolve();
     
         return defer.promise;
     }
@@ -504,6 +513,76 @@ self.logger.CAdebug("State changed to: " + state.status,'info');
     } 
 };
 
+/*
+// Volumio Play
+CoreCommandRouter.prototype.volumioPlay = function (N) {
+    this.pushConsoleMessage('CoreCommandRouter::volumioPlay');
+  
+    this.stateMachine.unSetVolatile();
+  
+    if (N === undefined) { return this.stateMachine.play(); } else {
+      return this.stateMachine.play(N);
+    }
+  };
+  
+  // Volumio Play
+  CoreCommandRouter.prototype.volumioVolatilePlay = function () {
+    this.pushConsoleMessage('CoreCommandRouter::volumioVolatilePlay');
+  
+    return this.stateMachine.volatilePlay();
+  };
+*/
 
+cantrol.prototype.binary = function (num, bits)
+{
+ let n = num & parseInt("1".repeat(bits),2);
+ let binStr = n.toString(2); 
+ let binStrF = ("0".repeat(bits)).substring(binStr.length) + binStr;
+ return binStrF;
+}
 
- 
+cantrol.prototype.rc5 = function (device, command)
+{
+ var self = this;   
+ var com = '1';
+ com += command > 63 ? '1' : '0';
+ com += self.control ? '1' : '0';
+ self.control = !self.control;
+ com += binary(device,5);
+ com += binary(command,6);
+ return com;
+}
+
+cantrol.prototype.sendRc5 = function (command)
+{
+    var self = this;
+    pigpio.waveClear();
+
+    let waveform = [];
+    for (let bit of command) {
+        if(bit == '0')
+        {
+            waveform.push({ gpioOn: 0, gpioOff: self.outPin, usDelay: self.RC5_del });
+            waveform.push({ gpioOn: self.outPin, gpioOff: 0, usDelay: self.RC5_del });
+        } else {
+            waveform.push({ gpioOn: 0, gpioOff: self.outPin, usDelay: self.RC5_del });
+            waveform.push({ gpioOn: self.outPin, gpioOff: 0, usDelay: self.RC5_del });
+        }    
+    }    
+    pigpio.waveAddGeneric(waveform);
+    let waveId = pigpio.waveCreate();
+    
+    if (waveId >= 0) {
+      pigpio.waveTxSend(waveId, pigpio.WAVE_MODE_ONE_SHOT);
+    }
+    while (pigpio.waveTxBusy()) {}
+    pigpio.waveDelete(waveId);
+    self.output.digitalWrite(0);
+}
+
+cantrol.prototype.saveSettings(data)
+{
+    var self = this;
+    let amplifier = data['amplifier']['value'];
+    self.CAdebug(amplifier, 'info');
+}

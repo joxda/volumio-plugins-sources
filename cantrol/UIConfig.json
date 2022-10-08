@@ -3,5 +3,51 @@
     "label": "TRANSLATE.PLUGIN_CONFIGURATION"
   },
   "sections": [
+    {
+      "id": "section_main",
+      "element": "section",
+      "label": "TRANSLATE.AMPLIFIER",
+      "icon": "fa-plug",
+      "onSave": {
+        "type": "controller",
+        "endpoint": "system_controller/cantrol",
+        "method": "saveSettings"
+      },
+      "saveButton": {
+        "label": "TRANSLATE.SAVE",
+        "data": [
+          "amplifier",
+        ]
+      },
+      "content": [
+        {
+          "id": "amplifier",
+          "type": "select",
+          "element": "input",
+          "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
+          "label": "TRANSLATE.AMPLIFER_MODEL",
+          'value': {'value': 2,'label': 'Less Jitter'
+          },
+               'options': [
+            {
+                   'value': 1,
+                   'label': 'Default'
+            },
+            {
+                   'value': 2,
+                   'label': 'Less Jitter'
+            },
+            {
+                   'value': 3,
+                   'label': 'Jitter'
+            },
+            {
+                   'value': 4,
+                   'label': 'Focus'
+            }
+          ]
+        }
+      ],
+    }
   ]
 }

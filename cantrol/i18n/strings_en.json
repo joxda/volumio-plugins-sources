@@ -1,4 +1,7 @@
 {
-  "PLUGIN_CONFIGURATION":"Example Plugin Configuration",
-  "SAVE":"Save"
+  "PLUGIN_CONFIGURATION": "CAntrol Configuration",
+  "SAVE": "Save",
+  "TRANSLATE.AMPLIFIER": "Amplifier",
+  "TRANSLATE.AMPLIFIER_MODEL": "Model",
+  "TRANSLATE.AMPLIFIER_MODEL_DOC": "Select the model of your amplifier..."
 }
