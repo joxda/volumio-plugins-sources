@@ -8,9 +8,9 @@ pi = pigpio.pi()
 # build RC5 message, return as int
 def build_rc5(toggle, dev, cmd):
     # TBD: check whether dev / cmd exist....
-    RC5_CMD = int(cmds[dev][cmd])
+    RC5_CMD = cmd
     RC5_START = 0b100 + (0b010 * (RC5_CMD < 64)) + (0b001 * toggle)
-    RC5_SYS = int(devs[dev])
+    RC5_SYS = dev
 
     # RC-5 message has a 3-bit start sequence, a 5-bit system ID, and a 6-bit command.
     RC5_MSG = ((RC5_START & 0b111) << 11) | (
