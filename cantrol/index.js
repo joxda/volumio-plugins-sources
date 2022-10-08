@@ -145,25 +145,25 @@ cantrol.prototype.onRestart = function() {
         let cmdo = 0;
         switch (cmd[0]) {
             case  "powerOn": 
-                cmd = 14;
+                cmdo = 14;
                 break;
             case  "powerToggle": 
-                cmd = 12;
+                cmdo = 12;
                 break;
             case  "volUp": 
-                cmd = 16;
+                cmdo = 16;
                 break;
             case  "volDown": 
-                cmd = 17;
+                cmdo = 17;
                 break;
             case  "muteToggle": 
-                cmd = 13;
+                cmdo = 13;
                 break;
             case  "muteOn": 
-                cmd = 50;
+                cmdo = 50;
                 break;
             case  "muteOff": 
-                cmd = 51;
+                cmdo = 51;
                 break;
             //case  "source": 
                 // cmdString = cmdString + self.selectedAmp.commands.source;
