@@ -23,7 +23,7 @@ function cantrol(context) {
     
     this.debug = true;
     // Setup Debugger
-    self.logger.CAdebug = function(data, level) {
+    self.logger.CAdebug = function (data, level) {
         if(self.debug)
         {
         switch (level) {
@@ -59,9 +59,9 @@ cantrol.prototype.onVolumioStart = function()
 cantrol.prototype.onStart = function() {
     var self = this;
 	var defer=libQ.defer();
-    var self.control = true;
-    var self.RA5_del = 889
-    var self.outPin = 17;
+    self.control = true;
+    self.RA5_del = 889
+    self.outPin = 17;
     
 	self.loadAmpDefinitions()
     //initialize list of serial devices available to the system
@@ -141,7 +141,7 @@ cantrol.prototype.onRestart = function() {
 
         let dev = 16;
 
-        let cmd = 14;
+        let cmdo = 14;
 /*        switch (cmd[0]) {
             case  "powerOn": 
                 cmdString = self.rc5(dev,14);
@@ -173,8 +173,8 @@ cantrol.prototype.onRestart = function() {
                 break;
         }*/
         // execute(pin, device, command, toggle, repeat)
-        self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmd+' '+self.control+' '+self.RA5_del,'info');
-        execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmd+' '+self.control+' '+self.RA5_del, { uid: 1000, gid: 1000, encoding: 'utf8' });
+        self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.RA5_del,'info');
+        execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.RA5_del, { uid: 1000, gid: 1000, encoding: 'utf8' });
     
         defer.resolve();
         return defer.promise;
@@ -234,7 +234,7 @@ cantrol.prototype.addToBrowseSources = function () {
 
 	// Use this function to add your music service plugin to music sources
     //var data = {name: 'Spotify', uri: 'spotify',plugin_type:'music_service',plugin_name:'spop'};
-    this.commandRouter.volumioAddToBrowseSources(data);
+    //this.commandRouter.volumioAddToBrowseSources(data);
 };
 
 cantrol.prototype.handleBrowseUri = function (curUri) {
@@ -576,7 +576,7 @@ cantrol.prototype.sendRc5 = function (command)
     self.output.digitalWrite(0);
 }*/
 
-cantrol.prototype.saveSettings(data)
+cantrol.prototype.saveSettings = function (data)
 {
     var self = this;
     let amplifier = data['amplifier']['value'];
