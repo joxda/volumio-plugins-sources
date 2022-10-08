@@ -141,28 +141,28 @@ cantrol.prototype.onRestart = function() {
 
         let dev = 16;
 
-        let cmdo = 14;
-/*        switch (cmd[0]) {
+        let cmdo = 0;
+/       switch (cmd[0]) {
             case  "powerOn": 
-                cmdString = self.rc5(dev,14);
+                cmd = 14;
                 break;
             case  "powerToggle": 
-                cmdString = self.rc5(dev,12);
+                cmd = 12;
                 break;
             case  "volUp": 
-                cmdString = self.rc5(dev,16);
+                cmd = 16;
                 break;
             case  "volDown": 
-                cmdString = self.rc5(dev,17);
+                cmd = 17;
                 break;
             case  "muteToggle": 
-                cmdString = self.rc5(dev,13);
+                cmd = 13;
                 break;
             case  "muteOn": 
-                cmdString = self.rc5(dev,50);
+                cmd = 50;
                 break;
             case  "muteOff": 
-                cmdString = self.rc5(dev,51);
+                cmd = 51;
                 break;
             //case  "source": 
                 // cmdString = cmdString + self.selectedAmp.commands.source;
@@ -171,7 +171,7 @@ cantrol.prototype.onRestart = function() {
                 //break;
             default:
                 break;
-        }*/
+        }
         // execute(pin, device, command, toggle, repeat)
         self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.RA5_del,'info');
         execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.RA5_del, { uid: 1000, gid: 1000, encoding: 'utf8' });
@@ -580,5 +580,5 @@ cantrol.prototype.saveSettings = function (data)
 {
     var self = this;
     let amplifier = data['amplifier']['value'];
-    self.CAdebug(amplifier, 'info');
+    self.logger.CAdebug(amplifier, 'info');
 }
