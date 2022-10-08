@@ -58,7 +58,7 @@ def execute(pin, device, command, toggle, repeat, delay):
 pin = int(sys.argv[1])
 device = int(sys.argv[2])
 command = int(sys.argv[3])
-toggle = sys.argv[4]
+toggle = if sys.argv[4] = "true": 0 else 1
 repeat = int(sys.argv[5])
 delay = int(sys.argv[6])
 execute(pin, device, command, toggle, repeat, delay)

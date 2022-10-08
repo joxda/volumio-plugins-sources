@@ -62,6 +62,7 @@ cantrol.prototype.onStart = function() {
     self.control = true;
     self.RA5_del = 889
     self.outPin = 17;
+    self.repeat = 1;
     
 	self.loadAmpDefinitions()
     //initialize list of serial devices available to the system
@@ -173,8 +174,8 @@ cantrol.prototype.onRestart = function() {
                 break;
         }
         // execute(pin, device, command, toggle, repeat)
-        self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.RA5_del,'info');
-        execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.RA5_del, { uid: 1000, gid: 1000, encoding: 'utf8' });
+        self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.repeat+' '+self.RA5_del,'info');
+        execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.repeat+' '+self.RA5_del, { uid: 1000, gid: 1000, encoding: 'utf8' });
     
         defer.resolve();
         return defer.promise;
