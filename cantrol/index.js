@@ -142,7 +142,7 @@ cantrol.prototype.onRestart = function() {
         let dev = 16;
 
         let cmdo = 0;
-/       switch (cmd[0]) {
+        switch (cmd[0]) {
             case  "powerOn": 
                 cmd = 14;
                 break;
