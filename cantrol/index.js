@@ -10,8 +10,6 @@ var io = require('socket.io-client');
 var socket = io.connect('http://localhost:3000');
 //declare global status variable
 var status = 'na';
-const pigpio = require('pigpio');
-const Gpio = pigpio.Gpio;
 
 
 module.exports = cantrol;
@@ -64,8 +62,6 @@ cantrol.prototype.onStart = function() {
     var self.control = true;
     var self.RA5_del = 889
     var self.outPin = 17;
-    var self.output = new Gpio(self.outPin, {mode: Gpio.OUTPUT});
-    self.output.digitalWrite(0);
     
 	self.loadAmpDefinitions()
     //initialize list of serial devices available to the system
@@ -145,7 +141,8 @@ cantrol.prototype.onRestart = function() {
 
         let dev = 16;
 
-        switch (cmd[0]) {
+        let cmd = 14;
+/*        switch (cmd[0]) {
             case  "powerOn": 
                 cmdString = self.rc5(dev,14);
                 break;
@@ -174,13 +171,12 @@ cantrol.prototype.onRestart = function() {
                 //break;
             default:
                 break;
-        }
-        //execSync('/usr/bin/python /home/volumio/pi_hifi_ctrl/ca_amp_ctrl.py '+cmdString, { uid: 1000, gid: 1000, encoding: 'utf8' });
+        }*/
+        // execute(pin, device, command, toggle, repeat)
+        self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmd+' '+self.control+' '+self.RA5_del,'info');
+        execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmd+' '+self.control+' '+self.RA5_del, { uid: 1000, gid: 1000, encoding: 'utf8' });
     
-        self.sendRc5(cmdStr);
-
         defer.resolve();
-    
         return defer.promise;
     }
     
@@ -532,7 +528,7 @@ CoreCommandRouter.prototype.volumioPlay = function (N) {
     return this.stateMachine.volatilePlay();
   };
 */
-
+/*
 cantrol.prototype.binary = function (num, bits)
 {
  let n = num & parseInt("1".repeat(bits),2);
@@ -578,7 +574,7 @@ cantrol.prototype.sendRc5 = function (command)
     while (pigpio.waveTxBusy()) {}
     pigpio.waveDelete(waveId);
     self.output.digitalWrite(0);
-}
+}*/
 
 cantrol.prototype.saveSettings(data)
 {

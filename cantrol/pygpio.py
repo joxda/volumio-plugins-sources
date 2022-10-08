@@ -21,7 +21,7 @@ def build_rc5(toggle, dev, cmd):
 # manchester encode waveform. Period is the half-bit period in microseconds.
 
 
-def wave_mnch(DATA, PIN):
+def wave_mnch(DATA, PIN, RC5_PER):
     pi.set_mode(PIN, pigpio.OUTPUT)  # set GPIO pin to output.
 
     # create msg
@@ -43,25 +43,24 @@ def wave_mnch(DATA, PIN):
     return wid
 
 
-def execute(pin, device, command, toggle, repeat):
+def execute(pin, device, command, toggle, repeat, delay):
 
-    for i in range(repeat):
-        # generate RC5 message (int)
-        rc5_msg = build_rc5(toggle, device, command)
+    # generate RC5 message (int)
+    rc5_msg = build_rc5(toggle, device, command)
 
-        # generate digital manchester-encoded waveform
-        wid = wave_mnch(rc5_msg, pin)
+    # generate digital manchester-encoded waveform
+    wid = wave_mnch(rc5_msg, pin, delay)
 
     for _ in range(repeat):
         cbs = pi.wave_send_once(wid)
 
 
-pin = sys.argv[1]
-device = sys.argv[2]
-command = sys.argv[3]
+pin = int(sys.argv[1])
+device = int(sys.argv[2])
+command = int(sys.argv[3])
 toggle = sys.argv[4]
-repeat = sys.argv[5]
-
-execute(pin, device, command, toggle, repeat)
+repeat = int(sys.argv[5])
+delay = int(sys.argv[6])
+execute(pin, device, command, toggle, repeat, delay)
 
 sys.exit(0)
