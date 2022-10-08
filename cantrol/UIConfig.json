@@ -16,7 +16,7 @@
       "saveButton": {
         "label": "TRANSLATE.SAVE",
         "data": [
-          "amplifier",
+          "amplifier"
         ]
       },
       "content": [
@@ -26,28 +26,30 @@
           "element": "input",
           "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
           "label": "TRANSLATE.AMPLIFER_MODEL",
-          'value': {'value': 2,'label': 'Less Jitter'
+          "value": {
+            "value": 2,
+            "label": "Less Jitter"
           },
-               'options': [
+          "options": [
             {
-                   'value': 1,
-                   'label': 'Default'
+              "value": 1,
+              "label": "Default"
             },
             {
-                   'value': 2,
-                   'label': 'Less Jitter'
+              "value": 2,
+              "label": "Less Jitter"
             },
             {
-                   'value': 3,
-                   'label': 'Jitter'
+              "value": 3,
+              "label": "Jitter"
             },
             {
-                   'value': 4,
-                   'label': 'Focus'
+              "value": 4,
+              "label": "Focus"
             }
           ]
         }
-      ],
+      ]
     }
   ]
 }
