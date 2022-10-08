@@ -434,7 +434,7 @@ cantrol.prototype.updateVolumeSettings = function() {
 cantrol.prototype.alsavolume = function (VolumeInteger) {
 	var self = this;
     var defer = libQ.defer();
-    self.commandRouter.volumioupdatevolume(self.getVolumeObject());
+    self.volumioupdatevolume();
     self.logger.info('[cantrol] alsavolume: Set volume "' + VolumeInteger + '"');
         switch (VolumeInteger) {
             case 'mute':
