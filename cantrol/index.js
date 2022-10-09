@@ -219,7 +219,7 @@ cantrol.prototype.getUIConfig = function() {
     self.commandRouter.i18nJson(__dirname+'/i18n/strings_'+lang_code+'.json',
         __dirname+'/i18n/strings_en.json',
         __dirname + '/UIConfig.json')
-        .then(function (uiconf) {
+        .then((uiconf) => {
             self.logger.CAdebug("CAME HERE","error");
 	    self.logeer.CAdebug(JSON.stringify(uiconf),"error");
     	    var files = fs.readdirSync("/data/plugins/system_controller/cantrol/ampConfs").filter(fn => fn.endsWith(".json"));
@@ -233,7 +233,7 @@ cantrol.prototype.getUIConfig = function() {
                 self.logger.CAdebug(ampJson,"debug");
                 opts.append( { "value": i, "label": ampJson["name"]} );
             }
-            uiconf["sections"][0]["content"] = {
+            uiconf["sections"][0].content[0] = {
                 "id": "amplifier",
                 "element": "select",
                 "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
@@ -247,8 +247,9 @@ cantrol.prototype.getUIConfig = function() {
 
             defer.resolve(uiconf);
 	    })
-        .fail(function()
+        .fail((e) => 
         {
+            self.logger.error('Could not fetch CAntrol UI Configuration: ' + e);
             defer.reject(new Error());
         });
 
