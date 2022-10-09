@@ -22,10 +22,9 @@
       "content": [
         {
           "id": "amplifier",
-          "type": "select",
-          "element": "input",
+          "element": "select",
           "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
-          "label": "TRANSLATE.AMPLIFER_MODEL",
+          "label": "TRANSLATE.AMPLIFIER_MODEL",
           "value": {
             "value": 2,
             "label": "Less Jitter"
