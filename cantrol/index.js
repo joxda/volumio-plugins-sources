@@ -211,6 +211,8 @@ cantrol.prototype.uiconf = function (uiconfIn)
 }
 
 cantrol.prototype.getUIConfig = function() {
+
+            
     var defer = libQ.defer();
     var self = this;
 
@@ -220,29 +222,31 @@ cantrol.prototype.getUIConfig = function() {
         __dirname+'/i18n/strings_en.json',
         __dirname + '/UIConfig.json')
         .then(function(uiconf) {
-	    var files = fs.readdirSync("/data/plugins/system_controller/ampConfs").filter(fn => fn.endsWith(".json"));
+    	    var files = fs.readdirSync("/data/plugins/system_controller/ampConfs").filter(fn => fn.endsWith(".json"));
 
-    var opts = [];
-    for (let i=1; i <= files.length; i++)
-    {
-        let rawdata = fs.readFileSync("/data/plugins/system_controller/ampConfs/"+files[i-1]);
-        let ampJson = JSON.parse(rawdata);
-        opts.append( { "value": i, "label": ampJson["name"]} );
-    }
-    uiconf["sections"][0]["content"] = {
-        "id": "amplifier",
-        "element": "select",
-        "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
-        "label": "TRANSLATE.AMPLIFIER_MODEL",
-        "value": {
-          "value": 0,
-          "label": ""
-        },
-        "options": opts
-      }
+            var opts = [];
+            for (let i=1; i <= files.length; i++)
+            {
+                self.logger.CAdebug(files[i-1],"debug");
+                let rawdata = fs.readFileSync("/data/plugins/system_controller/ampConfs/"+files[i-1]);
+                let ampJson = JSON.parse(rawdata);
+                self.logger.CAdebug(ampJson,"debug");
+                opts.append( { "value": i, "label": ampJson["name"]} );
+            }
+            uiconf["sections"][0]["content"] = {
+                "id": "amplifier",
+                "element": "select",
+                "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
+                "label": "TRANSLATE.AMPLIFIER_MODEL",
+                "value": {
+                    "value": 1,
+                    "label": "1"
+                },
+                "options": opts
+            }
 
-     defer.resolve(uiconf);
-	})
+            defer.resolve(uiconf);
+	    })
         .fail(function()
         {
             defer.reject(new Error());
