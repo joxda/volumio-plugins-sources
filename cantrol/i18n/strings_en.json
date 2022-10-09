@@ -1,7 +1,7 @@
 {
   "PLUGIN_CONFIGURATION": "CAntrol Configuration",
   "SAVE": "Save",
-  "TRANSLATE.AMPLIFIER": "Amplifier",
-  "TRANSLATE.AMPLIFIER_MODEL": "Model",
-  "TRANSLATE.AMPLIFIER_MODEL_DOC": "Select the model of your amplifier..."
+  "AMPLIFIER": "Amplifier",
+  "AMPLIFIER_MODEL": "Model",
+  "AMPLIFIER_MODEL_DOC": "Select the model of your amplifier..."
 }
