@@ -176,7 +176,7 @@ cantrol.prototype.onRestart = function() {
         // execute(pin, device, command, toggle, repeat)
         self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.repeat+' '+self.RA5_del,'info');
         execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.repeat+' '+self.RA5_del, { uid: 1000, gid: 1000, encoding: 'utf8' });
-    
+    // when settings are loaded use something like parseInt
         defer.resolve();
         return defer.promise;
     }
@@ -184,7 +184,37 @@ cantrol.prototype.onRestart = function() {
     
 
 // Configuration Methods -----------------------------------------------------------------------------
+cantrol.prototype.uiconf = function (uiconfIn)
+{
+    File dir = new File("/data/plugins/system_controller/ampConfs");
+    File[] files = dir.listFiles(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+            return name.matches("*.json");
+        }
+    });
 
+    var opts = [];
+    for (let i=1; i <= files.length; i++)
+    {
+        let rawdata = fs.readFileSync("/data/plugins/system_controller/ampConfs/"+files[i-1]);
+        let ampJson = JSON.parse(rawdata);
+        opts.append( { "value": i, "label": ampJson["name"]} );
+    }
+    uiconfIn["sections"][0][content] = {
+        "id": "amplifier",
+        "element": "select",
+        "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
+        "label": "TRANSLATE.AMPLIFIER_MODEL",
+        "value": {
+          "value": 0,
+          "label": ""
+        },
+        "options": opts
+      }
+    defer.resolve(uiconfIn);
+
+}
 cantrol.prototype.getUIConfig = function() {
     var defer = libQ.defer();
     var self = this;
@@ -194,10 +224,7 @@ cantrol.prototype.getUIConfig = function() {
     self.commandRouter.i18nJson(__dirname+'/i18n/strings_'+lang_code+'.json',
         __dirname+'/i18n/strings_en.json',
         __dirname + '/UIConfig.json')
-        .then(function(uiconf)
-        {
-            defer.resolve(uiconf);
-        })
+        .then(self.uiconf(uiconf))
         .fail(function()
         {
             defer.reject(new Error());

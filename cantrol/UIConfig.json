@@ -19,36 +19,7 @@
           "amplifier"
         ]
       },
-      "content": [
-        {
-          "id": "amplifier",
-          "element": "select",
-          "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
-          "label": "TRANSLATE.AMPLIFIER_MODEL",
-          "value": {
-            "value": 2,
-            "label": "Less Jitter"
-          },
-          "options": [
-            {
-              "value": 1,
-              "label": "Default"
-            },
-            {
-              "value": 2,
-              "label": "Less Jitter"
-            },
-            {
-              "value": 3,
-              "label": "Jitter"
-            },
-            {
-              "value": 4,
-              "label": "Focus"
-            }
-          ]
-        }
-      ]
+      "content": []
     }
   ]
 }
