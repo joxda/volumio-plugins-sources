@@ -20,7 +20,7 @@ function cantrol(context) {
 	this.commandRouter = this.context.coreCommand;
 	this.logger = this.context.logger;
 	this.configManager = this.context.configManager;
-    
+
     this.debug = true;
     // Setup Debugger
     self.logger.CAdebug = function (data, level) {
@@ -186,13 +186,7 @@ cantrol.prototype.onRestart = function() {
 // Configuration Methods -----------------------------------------------------------------------------
 cantrol.prototype.uiconf = function (uiconfIn)
 {
-    File dir = new File("/data/plugins/system_controller/ampConfs");
-    File[] files = dir.listFiles(new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-            return name.matches("*.json");
-        }
-    });
+    var files = fs.readdirSync("/data/plugins/system_controller/ampConfs").filter(fn => fn.endsWith(".json"));
 
     var opts = [];
     for (let i=1; i <= files.length; i++)
@@ -212,9 +206,10 @@ cantrol.prototype.uiconf = function (uiconfIn)
         },
         "options": opts
       }
-    defer.resolve(uiconfIn);
 
+     defer.resolve(uiconfIn);
 }
+
 cantrol.prototype.getUIConfig = function() {
     var defer = libQ.defer();
     var self = this;
@@ -224,7 +219,30 @@ cantrol.prototype.getUIConfig = function() {
     self.commandRouter.i18nJson(__dirname+'/i18n/strings_'+lang_code+'.json',
         __dirname+'/i18n/strings_en.json',
         __dirname + '/UIConfig.json')
-        .then(self.uiconf(uiconf))
+        .then(function(uiconf) {
+	    var files = fs.readdirSync("/data/plugins/system_controller/ampConfs").filter(fn => fn.endsWith(".json"));
+
+    var opts = [];
+    for (let i=1; i <= files.length; i++)
+    {
+        let rawdata = fs.readFileSync("/data/plugins/system_controller/ampConfs/"+files[i-1]);
+        let ampJson = JSON.parse(rawdata);
+        opts.append( { "value": i, "label": ampJson["name"]} );
+    }
+    uiconf["sections"][0]["content"] = {
+        "id": "amplifier",
+        "element": "select",
+        "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
+        "label": "TRANSLATE.AMPLIFIER_MODEL",
+        "value": {
+          "value": 0,
+          "label": ""
+        },
+        "options": opts
+      }
+
+     defer.resolve(uiconf);
+	})
         .fail(function()
         {
             defer.reject(new Error());
