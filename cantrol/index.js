@@ -187,14 +187,14 @@ cantrol.prototype.getUIConfig = function() {
                 let rawdata = fs.readFileSync("/data/plugins/system_controller/cantrol/ampConfs/"+files[i-1]);
                 let ampJson = JSON.parse(rawdata);
                 self.logger.CAdebug(ampJson,"debug");
-                opts.append( { "value": i, "label": ampJson["name"]} );
+                opts.push( { "value": i, "label": ampJson["name"]} );
                 if(self.ampName == ampJson["name"])
                 {
                     value = {"value": i, "label": ampJson["name"]};
                     self.ampJSON = ampJson;
                 }
             }
-            opts.append( { "value": files.length+1, "label": "Configure..."} );
+            opts.push( { "value": files.length+1, "label": "Configure..."} );
 
             uiconf["sections"][0].content[0] = {
                 "id": "amplifier",
@@ -214,7 +214,7 @@ cantrol.prototype.getUIConfig = function() {
                     "doc": "TRANSLATE.TEST_BUTTON",
                     "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
                 };
-                uiconf["sections"][0].content.append(btn);
+                uiconf["sections"][0].content.push(btn);
             }
             for (let i=0; i < self.ampJSON["Sources"].length; i++)
             {
@@ -226,7 +226,7 @@ cantrol.prototype.getUIConfig = function() {
                     "doc": "TRANSLATE.SOURCES",
                     "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
                 };
-                uiconf["sections"][0].content.append(btn);
+                uiconf["sections"][0].content.push(btn);
             }
             for (let i=0; i < self.ampJSON["Miscellaneous"].length; i++)
             {
@@ -238,7 +238,7 @@ cantrol.prototype.getUIConfig = function() {
                     "doc": "TRANSLATE.TEST_BUTTON",
                     "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
                 };
-                uiconf["sections"][0].content.append(btn);
+                uiconf["sections"][0].content.push(btn);
             }
 
             for (const [key, value] of Object.entries(self.ampJSON["Commands"]) 
@@ -253,7 +253,7 @@ cantrol.prototype.getUIConfig = function() {
                             {"type": "number"}, {"min": 0}, {"max":127}
                           ]
                 };
-                    uiconf["sections"][0].content.append(txt);
+                    uiconf["sections"][0].content.push(txt);
                 }
                 for (let i=0; i < self.ampJSON["Sources"].length; i++)
                 {
@@ -265,7 +265,7 @@ cantrol.prototype.getUIConfig = function() {
                         "doc": "TRANSLATE.CONFIGURE",
                         "value": value,
                         "visibleIf": {"field": "amplifier", "value": files.length }                    };
-                    uiconf["sections"][0].content.append(txt);
+                    uiconf["sections"][0].content.push(txt);
                 }
                 for (let i=0; i < self.ampJSON["Miscellaneous"].length; i++)
                 {
@@ -277,7 +277,7 @@ cantrol.prototype.getUIConfig = function() {
                         "doc": "TRANSLATE.CONFIGURE",
                         "value": value,
                         "visibleIf": {"field": "amplifier", "value": files.length }                    };
-                    uiconf["sections"][0].content.append(txt);
+                    uiconf["sections"][0].content.push(txt);
                 }
             defer.resolve(uiconf);
 	    })
