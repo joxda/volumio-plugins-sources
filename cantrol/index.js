@@ -131,7 +131,7 @@ cantrol.prototype.onRestart = function() {
     // Optional, use if you need it
 };
 
-cantrol.prototype.sendNumCom(com)
+cantrol.prototype.sendNumCom = function (com)
 {
     // execute(pin, device, command, toggle, repeat)
     self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.config.get("output_pin")+' '+self.ampJson["devNum"]+' '+com+' '+self.control+' '+self.config.get("repeat")+' '+self.config.get("half_period"),'info');
