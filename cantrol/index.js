@@ -206,7 +206,7 @@ cantrol.prototype.getUIConfig = function() {
             }
 
             //for (let i=0; i < self.ampJSON["Commands"].length; i++)
-            for (const [key, value] of Object.entries(self.ampJSON["Commands"]) {
+            for (const [key, value] of Object.entries(self.ampJSON["Commands"])) {
             {
                 btn = 	{	  "id":key,
                     "element": "button",
@@ -241,7 +241,7 @@ cantrol.prototype.getUIConfig = function() {
                 uiconf["sections"][0].content.push(btn);
             }
 
-            for (const [key, value] of Object.entries(self.ampJSON["Commands"]) 
+            for (const [key, value] of Object.entries(self.ampJSON["Commands"]))
                 {
                     txt = 	{	  "id":key+"TXT",
                         "element": "input",
@@ -280,7 +280,7 @@ cantrol.prototype.getUIConfig = function() {
                     uiconf["sections"][0].content.push(txt);
                 }
             defer.resolve(uiconf);
-	    })
+	   } )
         .fail((e) => 
         {
             self.logger.error('Could not fetch CAntrol UI Configuration: ' + e);
