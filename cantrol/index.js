@@ -206,7 +206,7 @@ cantrol.prototype.getUIConfig = function() {
             }
 
             //for (let i=0; i < self.ampJSON["Commands"].length; i++)
-            for (const [key, value] of Object.entries(self.ampJSON["Commands"])) {
+            for (const [key, value] of Object.entries(self.ampJSON["Commands"])) 
             {
                 btn = 	{	  "id":key,
                     "element": "button",
