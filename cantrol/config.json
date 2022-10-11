@@ -1,3 +1,127 @@
 {
- 
+    "name": "CXA80",
+    "devNum": 16,
+    "repeat": 1,
+    "half_period": 889,
+    "output_pin": 17,
+    "Power_Toggle": 12,
+    "Power_On": 14,
+    "Power_Off": 15,
+    "Mute_Toggle": 13,
+    "Mute_On": 50,
+    "Mute_Off": 51,
+    "Volume_Up": 16,
+    "Volume_Down": 17,
+    "Sources": {
+        [
+            {
+                "name": "A1",
+                "code": 100
+            },
+            {
+                "name": "A2",
+                "code": 101
+            },
+            {
+                "name": "A3",
+                "code": 102
+            },
+            {
+                "name": "A4",
+                "code": 103
+            },
+            {
+                "name": "A1_(Balanced)",
+                "code": 104
+            },
+            {
+                "name": "D1",
+                "code": 105
+            },
+            {
+                "name": "D1",
+                "code": 105
+            },
+            {
+                "name": "D2",
+                "code": 106
+            },
+            {
+                "name": "D3",
+                "code": 107
+            },
+            {
+                "name": "Mp3",
+                "code": 108
+            },
+            {
+                "name": "USB",
+                "code": 114
+            },
+            {
+                "name": "Bluetooth",
+                "code": 115
+            }
+        ]
+    },
+    "Miscellaneous": {
+        [
+            {
+                "name": "LCD_Bright",
+                "code": 18
+            },
+            {
+                "name": "Brightness_Toggle",
+                "code": 72
+            },
+            {
+                "name": "LCD_Dim",
+                "code": 19
+            },
+            {
+                "name": "LCD_Off",
+                "code": 71
+            },
+            {
+                "name": "Speaker_Select",
+                "code": 20
+            },
+            {
+                "name": "Speaker_AB",
+                "code": 30
+            },
+            {
+                "name": "Speaker_A",
+                "code": 35
+            },
+            {
+                "name": "Speaker_B",
+                "code": 39
+            },
+            {
+                "name": "Analogue_Stereo_Direct",
+                "code": 78
+            },
+            {
+                "name": "Trigger_A",
+                "code": 82
+            },
+            {
+                "name": "Trigger_B",
+                "code": 83
+            },
+            {
+                "name": "Trigger_C",
+                "code": 84
+            },
+            {
+                "name": "Source_Up",
+                "code": 99
+            },
+            {
+                "name": "Source_Down",
+                "code": 126
+            }
+        ]
+    }
 }

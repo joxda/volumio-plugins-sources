@@ -131,7 +131,13 @@ cantrol.prototype.onRestart = function() {
     // Optional, use if you need it
 };
 
-
+cantrol.prototype.sendNumCom(com)
+{
+    // execute(pin, device, command, toggle, repeat)
+    self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.config.get("output_pin")+' '+self.ampJson["devNum"]+' '+com+' '+self.control+' '+self.config.get("repeat")+' '+self.config.get("half_period"),'info');
+    execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.config.get("output_pin")+' '+self.ampJson["devNum"]+' '+com+' '+self.control+' '+self.config.get("repeat")+' '+self.config.get("half_period"), { uid: 1000, gid: 1000, encoding: 'utf8' });
+    // when settings are loaded use something like parseInt
+}
 	//send commands to the amp
     cantrol.prototype.sendCommand  = function(...cmd) {
         var self = this;
@@ -140,76 +146,24 @@ cantrol.prototype.onRestart = function() {
         var cmdString = '';
         self.logger.CAdebug("sendCommand: send " + cmd,'info');
 
-        let dev = 16;
 
-        let cmdo = 0;
-        switch (cmd[0]) {
-            case  "powerOn": 
-                cmdo = 14;
-                break;
-            case  "powerToggle": 
-                cmdo = 12;
-                break;
-            case  "volUp": 
-                cmdo = 16;
-                break;
-            case  "volDown": 
-                cmdo = 17;
-                break;
-            case  "muteToggle": 
-                cmdo = 13;
-                break;
-            case  "muteOn": 
-                cmdo = 50;
-                break;
-            case  "muteOff": 
-                cmdo = 51;
-                break;
-            //case  "source": 
-                // cmdString = cmdString + self.selectedAmp.commands.source;
-                // var count = (cmdString.match(/#/g) || []).length;
-              //  cmdString =  self.selectedAmp.sourceCmd[self.selectedAmp.sources.indexOf(cmd[1])];
-                //break;
-            default:
-                break;
+        if (self.ampJSON)
+        {
+            let cmdo = self.ampJSON[cmd];
+            // CHECK THAT IT IS VALID
+            
+            defer.resolve();
         }
-        // execute(pin, device, command, toggle, repeat)
-        self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.repeat+' '+self.RA5_del,'info');
-        execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.outPin+' '+dev+' '+cmdo+' '+self.control+' '+self.repeat+' '+self.RA5_del, { uid: 1000, gid: 1000, encoding: 'utf8' });
-    // when settings are loaded use something like parseInt
-        defer.resolve();
+        else {
+            defer.fail("no amp settings active");
+        }
+        
         return defer.promise;
     }
     
     
 
 // Configuration Methods -----------------------------------------------------------------------------
-cantrol.prototype.uiconf = function (uiconfIn)
-{
-    var files = fs.readdirSync("/data/plugins/system_controller/ampConfs").filter(fn => fn.endsWith(".json"));
-
-    var opts = [];
-    for (let i=1; i <= files.length; i++)
-    {
-        let rawdata = fs.readFileSync("/data/plugins/system_controller/cantrol/ampConfs/"+files[i-1]);
-        let ampJson = JSON.parse(rawdata);
-        opts.append( { "value": i, "label": ampJson["name"]} );
-    }
-    uiconfIn["sections"][0][content] = {
-        "id": "amplifier",
-        "element": "select",
-        "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
-        "label": "TRANSLATE.AMPLIFIER_MODEL",
-        "value": {
-          "value": 0,
-          "label": ""
-        },
-        "options": opts
-      }
-
-     defer.resolve(uiconfIn);
-}
-
 cantrol.prototype.getUIConfig = function() {
     var defer = libQ.defer();
     var self = this;
@@ -220,11 +174,13 @@ cantrol.prototype.getUIConfig = function() {
         __dirname+'/i18n/strings_en.json',
         __dirname + '/UIConfig.json')
         .then((uiconf) => {
-            self.logger.CAdebug("CAME HERE","error");
-	    self.logeer.CAdebug(JSON.stringify(uiconf),"error");
     	    var files = fs.readdirSync("/data/plugins/system_controller/cantrol/ampConfs").filter(fn => fn.endsWith(".json"));
 
+            self.ampName = self.config.get('name');
+
             var opts = [];
+
+            var value = {};
             for (let i=1; i <= files.length; i++)
             {
                 self.logger.CAdebug(files[i-1],"debug");
@@ -232,19 +188,97 @@ cantrol.prototype.getUIConfig = function() {
                 let ampJson = JSON.parse(rawdata);
                 self.logger.CAdebug(ampJson,"debug");
                 opts.append( { "value": i, "label": ampJson["name"]} );
+                if(self.ampName == ampJson["name"])
+                {
+                    value = {"value": i, "label": ampJson["name"]};
+                    self.ampJSON = ampJson;
+                }
             }
+            opts.append( { "value": files.length+1, "label": "Configure..."} );
+
             uiconf["sections"][0].content[0] = {
                 "id": "amplifier",
                 "element": "select",
                 "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
                 "label": "TRANSLATE.AMPLIFIER_MODEL",
-                "value": {
-                    "value": 1,
-                    "label": "1"
-                },
+                "value": value,
                 "options": opts
             }
 
+            //for (let i=0; i < self.ampJSON["Commands"].length; i++)
+            for (const [key, value] of Object.entries(self.ampJSON["Commands"]) {
+            {
+                btn = 	{	  "id":key,
+                    "element": "button",
+                    "label": key,
+                    "doc": "TRANSLATE.TEST_BUTTON",
+                    "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
+                };
+                uiconf["sections"][0].content.append(btn);
+            }
+            for (let i=0; i < self.ampJSON["Sources"].length; i++)
+            {
+                let key = self.ampJSON["Sources"][i]["name"];
+                let value = self.ampJSON["Sources"][i]["code"];
+                btn = 	{	  "id":key,
+                    "element": "button",
+                    "label": key,
+                    "doc": "TRANSLATE.SOURCES",
+                    "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
+                };
+                uiconf["sections"][0].content.append(btn);
+            }
+            for (let i=0; i < self.ampJSON["Miscellaneous"].length; i++)
+            {
+                let key = self.ampJSON["Miscellaneous"][i]["name"];
+                let value = self.ampJSON["Miscellaneous"][i]["code"];
+                btn = 	{	  "id":key,
+                    "element": "button",
+                    "label": key,
+                    "doc": "TRANSLATE.TEST_BUTTON",
+                    "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
+                };
+                uiconf["sections"][0].content.append(btn);
+            }
+
+            for (const [key, value] of Object.entries(self.ampJSON["Commands"]) 
+                {
+                    txt = 	{	  "id":key+"TXT",
+                        "element": "input",
+                        "label": key,
+                        "doc": "TRANSLATE.CONFIGURE",
+                        "value": value,
+                        "visibleIf": {"field": "amplifier", "value": files.length},
+                        "attributes": [
+                            {"type": "number"}, {"min": 0}, {"max":127}
+                          ]
+                };
+                    uiconf["sections"][0].content.append(txt);
+                }
+                for (let i=0; i < self.ampJSON["Sources"].length; i++)
+                {
+                    let key = self.ampJSON["Sources"][i]["name"];
+                    let value = self.ampJSON["Sources"][i]["code"];
+                    txt = 	{	  "id":key+"TXT",
+                        "element": "input",
+                        "label": key,
+                        "doc": "TRANSLATE.CONFIGURE",
+                        "value": value,
+                        "visibleIf": {"field": "amplifier", "value": files.length }                    };
+                    uiconf["sections"][0].content.append(txt);
+                }
+                for (let i=0; i < self.ampJSON["Miscellaneous"].length; i++)
+                {
+                    let key = self.ampJSON["Miscellaneous"][i]["name"];
+                    let value = self.ampJSON["Miscellaneous"][i]["code"];
+                    txt = 	{	  "id":key+"TXT",
+                        "element": "input",
+                        "label": key,
+                        "doc": "TRANSLATE.CONFIGURE",
+                        "value": value,
+                        "visibleIf": {"field": "amplifier", "value": files.length }                    };
+                    uiconf["sections"][0].content.append(txt);
+                }
             defer.resolve(uiconf);
 	    })
         .fail((e) => 
@@ -491,34 +525,34 @@ cantrol.prototype.alsavolume = function (VolumeInteger) {
             // Mute
                      self.logger.CAdebug('alsavolume: send dedicated muteOn.','debug');
                     //defer.resolve(self.waitForAcknowledge('mute'));
-                    self.sendCommand('muteOn');
+                    self.sendCommand('Mute_On');
                 
                 break;
             case 'unmute':
             // Unmute (inverse of mute)
                     self.logger.CAdebug('alsavolume: send dedicated muteOff.','debug');
-                    self.sendCommand('muteOff');
+                    self.sendCommand('Mute_Off');
                 break;
             case 'toggle':
             // Toggle mute
                 self.logger.CAdebug('alsavolume: send muteToggle.','debug');
-                self.sendCommand('muteToggle');
+                self.sendCommand('Mute_Toggle');
                 break;
             case '+':
             	self.logger.CAdebug('alsavolume: increase volume by single step.','debug');
-               self.sendCommand('volUp');
+               self.sendCommand('Volume_Up');
                 break;
             case '-':
 				self.logger.CAdebug('alsavolume: decrease volume by single step.','debug');
-				self.sendCommand('volDown');
+				self.sendCommand('Volume_Down');
             break;
             default:
             //set volume to integer
                 self.logger.CAdebug('alsavolume: set volume to integer value.','debug');
                 if (VolumeInteger>50) {
-					self.sendCommand('volUp');
+					self.sendCommand('Volume_Up');
                 } else if (VolumeInteger<50){
-					self.sendCommand('volDown');
+					self.sendCommand('Volume_Down');
                 }
                 break;   
         };
