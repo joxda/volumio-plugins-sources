@@ -5,5 +5,7 @@
   "AMPLIFIER_MODEL": "Model",
   "AMPLIFIER_MODEL_DOC": "Select the model of your amplifier.",
   "TEST_BUTTON": "Test command",
-  "SOURCES": "Select source"
+  "SOURCES": "Select source",
+  "CONFIGURE": "Configure command",
+  "CONFIF": "Configure"
 }

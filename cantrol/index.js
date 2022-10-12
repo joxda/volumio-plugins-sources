@@ -52,6 +52,8 @@ cantrol.prototype.onVolumioStart = function()
 	var configFile=this.commandRouter.pluginManager.getConfigurationFile(this.context,'config.json');
 	this.config = new (require('v-conf'))();
 	this.config.loadFile(configFile);
+	let rdata = fs.readFileSync(__dirname+"/config.json");
+        self.configJSON = JSON.parse(rdata);
 
     return libQ.resolve();
 }
@@ -133,9 +135,10 @@ cantrol.prototype.onRestart = function() {
 
 cantrol.prototype.sendNumCom = function (com)
 {
+    var self = this;
     // execute(pin, device, command, toggle, repeat)
-    self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.config.get("output_pin")+' '+self.ampJson["devNum"]+' '+com+' '+self.control+' '+self.config.get("repeat")+' '+self.config.get("half_period"),'info');
-    execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.config.get("output_pin")+' '+self.ampJson["devNum"]+' '+com+' '+self.control+' '+self.config.get("repeat")+' '+self.config.get("half_period"), { uid: 1000, gid: 1000, encoding: 'utf8' });
+    self.logger.CAdebug('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.configJSON["output_pin"]+' '+self.configJSON["devNum"]+' '+com+' '+self.control+' '+self.configJSON["repeat"]+' '+self.configJSON["half_period"],'info');
+    execSync('/usr/bin/python /data/plugins/system_controller/cantrol/pygpio.py '+self.configJSON["output_pin"]+' '+self.configJSON["devNum"]+' '+com+' '+self.control+' '+self.configJSON["repeat"]+' '+self.configJSON["half_period"], { uid: 1000, gid: 1000, encoding: 'utf8' });
     // when settings are loaded use something like parseInt
 }
 	//send commands to the amp
@@ -147,9 +150,9 @@ cantrol.prototype.sendNumCom = function (com)
         self.logger.CAdebug("sendCommand: send " + cmd,'info');
 
 
-        if (self.ampJSON)
+        if (self.configJSON)
         {
-            let cmdo = self.ampJSON[cmd];
+            let cmdo = self.configJSON[cmd];
             // CHECK THAT IT IS VALID
             
             defer.resolve();
@@ -174,27 +177,28 @@ cantrol.prototype.getUIConfig = function() {
         __dirname+'/i18n/strings_en.json',
         __dirname + '/UIConfig.json')
         .then((uiconf) => {
-    	    var files = fs.readdirSync("/data/plugins/system_controller/cantrol/ampConfs").filter(fn => fn.endsWith(".json"));
+    	    var files = fs.readdirSync(__dirname+"/ampConfs").filter(fn => fn.endsWith(".json"));
 
-            self.ampName = self.config.get('name');
-
+            self.ampName = self.configJSON['name'];
+	    self.logger.CAdebug(self.ampName,"error");
             var opts = [];
 
             var value = {};
             for (let i=1; i <= files.length; i++)
             {
-                self.logger.CAdebug(files[i-1],"debug");
-                let rawdata = fs.readFileSync("/data/plugins/system_controller/cantrol/ampConfs/"+files[i-1]);
+                self.logger.CAdebug(files[i-1],"error");
+                let rawdata = fs.readFileSync(__dirname+"/ampConfs/"+files[i-1]);
                 let ampJson = JSON.parse(rawdata);
-                self.logger.CAdebug(ampJson,"debug");
+                self.logger.CAdebug(JSON.stringify(ampJson),"error");
+		self.logger.CAdebug(self.ampName,"error");
                 opts.push( { "value": i, "label": ampJson["name"]} );
                 if(self.ampName == ampJson["name"])
                 {
                     value = {"value": i, "label": ampJson["name"]};
-                    self.ampJSON = ampJson;
+                    self.configJSON = ampJson;
                 }
             }
-            opts.push( { "value": files.length+1, "label": "Configure..."} );
+            opts.push( { "value": files.length+1, "label": "TRANSLATE.CONFIG"+"..."} );
 
             uiconf["sections"][0].content[0] = {
                 "id": "amplifier",
@@ -206,9 +210,9 @@ cantrol.prototype.getUIConfig = function() {
             }
 
             //for (let i=0; i < self.ampJSON["Commands"].length; i++)
-            for (const [key, value] of Object.entries(self.ampJSON["Commands"])) 
+            for (const [key, value] of Object.entries(self.configJSON["Commands"])) 
             {
-                btn = 	{	  "id":key,
+                let btn = 	{	  "id":key,
                     "element": "button",
                     "label": key,
                     "doc": "TRANSLATE.TEST_BUTTON",
@@ -216,11 +220,11 @@ cantrol.prototype.getUIConfig = function() {
                 };
                 uiconf["sections"][0].content.push(btn);
             }
-            for (let i=0; i < self.ampJSON["Sources"].length; i++)
+            for (let i=0; i < self.configJSON["Sources"].length; i++)
             {
-                let key = self.ampJSON["Sources"][i]["name"];
-                let value = self.ampJSON["Sources"][i]["code"];
-                btn = 	{	  "id":key,
+                let key = self.configJSON["Sources"][i]["name"];
+                let value = self.configJSON["Sources"][i]["code"];
+                let btn = 	{	  "id":key,
                     "element": "button",
                     "label": key,
                     "doc": "TRANSLATE.SOURCES",
@@ -228,11 +232,11 @@ cantrol.prototype.getUIConfig = function() {
                 };
                 uiconf["sections"][0].content.push(btn);
             }
-            for (let i=0; i < self.ampJSON["Miscellaneous"].length; i++)
+            for (let i=0; i < self.configJSON["Miscellaneous"].length; i++)
             {
-                let key = self.ampJSON["Miscellaneous"][i]["name"];
-                let value = self.ampJSON["Miscellaneous"][i]["code"];
-                btn = 	{	  "id":key,
+                let key = self.configJSON["Miscellaneous"][i]["name"];
+                let value = self.configJSON["Miscellaneous"][i]["code"];
+                let btn = 	{	  "id":key,
                     "element": "button",
                     "label": key,
                     "doc": "TRANSLATE.TEST_BUTTON",
@@ -241,44 +245,49 @@ cantrol.prototype.getUIConfig = function() {
                 uiconf["sections"][0].content.push(btn);
             }
 
-            for (const [key, value] of Object.entries(self.ampJSON["Commands"]))
+            for (const [key, value] of Object.entries(self.configJSON["Commands"]))
                 {
-                    txt = 	{	  "id":key+"TXT",
+                    let txt = 	{	  "id":key+"TXT",
                         "element": "input",
                         "label": key,
                         "doc": "TRANSLATE.CONFIGURE",
                         "value": value,
-                        "visibleIf": {"field": "amplifier", "value": files.length},
+                        "visibleIf": {"field": "amplifier", "value": files.length+1},
                         "attributes": [
                             {"type": "number"}, {"min": 0}, {"max":127}
                           ]
                 };
                     uiconf["sections"][0].content.push(txt);
                 }
-                for (let i=0; i < self.ampJSON["Sources"].length; i++)
+                for (let i=0; i < self.configJSON["Sources"].length; i++)
                 {
-                    let key = self.ampJSON["Sources"][i]["name"];
-                    let value = self.ampJSON["Sources"][i]["code"];
-                    txt = 	{	  "id":key+"TXT",
+                    let key = self.configJSON["Sources"][i]["name"];
+                    let value = self.configJSON["Sources"][i]["code"];
+                    let txt = 	{	  "id":key+"TXT",
                         "element": "input",
                         "label": key,
                         "doc": "TRANSLATE.CONFIGURE",
                         "value": value,
-                        "visibleIf": {"field": "amplifier", "value": files.length }                    };
+                        "visibleIf": {"field": "amplifier", "value": files.length+1 }                    };
                     uiconf["sections"][0].content.push(txt);
                 }
-                for (let i=0; i < self.ampJSON["Miscellaneous"].length; i++)
+                for (let i=0; i < self.configJSON["Miscellaneous"].length; i++)
                 {
-                    let key = self.ampJSON["Miscellaneous"][i]["name"];
-                    let value = self.ampJSON["Miscellaneous"][i]["code"];
-                    txt = 	{	  "id":key+"TXT",
+                    let key = self.configJSON["Miscellaneous"][i]["name"];
+                    let value = self.configJSON["Miscellaneous"][i]["code"];
+                    let txt = 	{	  "id":key+"TXT",
                         "element": "input",
                         "label": key,
                         "doc": "TRANSLATE.CONFIGURE",
                         "value": value,
-                        "visibleIf": {"field": "amplifier", "value": files.length }                    };
+                        "visibleIf": {"field": "amplifier", "value": files.length+1 }                    };
                     uiconf["sections"][0].content.push(txt);
                 }
+fs.writeFile(__dirname+"test.txt", JSON.stringify(uiconf,null,2), function(err) {
+    if (err) {
+        console.log(err);
+    }
+});
             defer.resolve(uiconf);
 	   } )
         .fail((e) => 
