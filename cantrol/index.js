@@ -1,5 +1,14 @@
 'use strict';
 
+// HOW TO GET THE TRANSLATE UNIT TO RUN AFTER THE MODIFICATIONS?!
+
+// options to add commands? 
+// save configure / selection... -- Could be as simple as writing the json to the config file?
+// and then... music_... for cd?
+
+// LOOK AT PERSONAL_RADIO...
+// USE DROPDOWN TO SELECT DIFFERENT CONFIGURE SECTIONS?
+
 var libQ = require('kew');
 var fs=require('fs-extra');
 var config = new (require('v-conf'))();
@@ -200,14 +209,8 @@ cantrol.prototype.getUIConfig = function() {
             }
             opts.push( { "value": files.length+1, "label": "TRANSLATE.CONFIG"+"..."} );
 
-            uiconf["sections"][0].content[0] = {
-                "id": "amplifier",
-                "element": "select",
-                "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
-                "label": "TRANSLATE.AMPLIFIER_MODEL",
-                "value": value,
-                "options": opts
-            }
+            uiconf["sections"][0].content[0]["value"] = value;
+            uiconf["sections"][0].content[0]["options"] = opts;
 
             //for (let i=0; i < self.ampJSON["Commands"].length; i++)
             for (const [key, value] of Object.entries(self.configJSON["Commands"])) 

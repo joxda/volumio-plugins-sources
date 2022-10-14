@@ -19,7 +19,23 @@
           "amplifier"
         ]
       },
-      "content": []
+      "content": [
+        {
+          "id": "amplifier",
+          "element": "select",
+          "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
+          "label": "TRANSLATE.AMPLIFIER_MODEL",
+          "value": {},
+          "options": []
+        },
+        {
+          "id": "cdplayer",
+          "element": "switch",
+          "label": "TRANSLATE.CDPLAYER",
+          "description": "TRANSLATE.CDPLAYER_DOC",
+          "value": true
+        }
+      ]
     }
   ]
 }

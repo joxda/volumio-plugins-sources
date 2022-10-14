@@ -55,12 +55,19 @@ def execute(pin, device, command, toggle, repeat, delay):
         cbs = pi.wave_send_once(wid)
 
 
-pin = int(sys.argv[1])
-device = int(sys.argv[2])
-command = int(sys.argv[3])
-toggle = 0 if sys.argv[4] == "true" else 1
-repeat = int(sys.argv[5])
-delay = int(sys.argv[6])
+if(len(sys.argv) != 7):
+    sys.exit(1)
+
+try:
+    pin = int(sys.argv[1])
+    device = int(sys.argv[2])
+    command = int(sys.argv[3])
+    toggle = 0 if sys.argv[4] == "true" else 1
+    repeat = int(sys.argv[5])
+    delay = int(sys.argv[6])
+except:
+    sys.exit(1)
+
 execute(pin, device, command, toggle, repeat, delay)
 
 sys.exit(0)
