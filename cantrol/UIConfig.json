@@ -23,7 +23,7 @@
         {
           "id": "amplifier",
           "element": "select",
-          "doc": "TRANSLATE.AMPLIFIER_MODEL_DOC",
+          "description": "TRANSLATE.AMPLIFIER_MODEL_DOC",
           "label": "TRANSLATE.AMPLIFIER_MODEL",
           "value": {},
           "options": []

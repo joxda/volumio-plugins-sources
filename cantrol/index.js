@@ -213,6 +213,7 @@ cantrol.prototype.getUIConfig = function() {
             uiconf["sections"][0].content[0]["options"] = opts;
 
             //for (let i=0; i < self.ampJSON["Commands"].length; i++)
+            let first = true;
             for (const [key, value] of Object.entries(self.configJSON["Commands"])) 
             {
                 let btn = 	{	  "id":key,
@@ -221,6 +222,12 @@ cantrol.prototype.getUIConfig = function() {
                     "doc": "TRANSLATE.TEST_BUTTON",
                     "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
                 };
+                if (first){
+                    btn["description"] = "TRANSLATE.TEST_BUTTON";
+                    first = false;
+                } else {
+                    btn["doc"] = "TRANSLATE.TEST_BUTTON";
+                }
                 uiconf["sections"][0].content.push(btn);
             }
             for (let i=0; i < self.configJSON["Sources"].length; i++)
@@ -230,9 +237,13 @@ cantrol.prototype.getUIConfig = function() {
                 let btn = 	{	  "id":key,
                     "element": "button",
                     "label": key,
-                    "doc": "TRANSLATE.SOURCES",
                     "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
                 };
+                if (i==0){
+                    btn["description"] = "TRANSLATE.TEST_BUTTON";
+                } else {
+                    btn["doc"] = "TRANSLATE.TEST_BUTTON";
+                }
                 uiconf["sections"][0].content.push(btn);
             }
             for (let i=0; i < self.configJSON["Miscellaneous"].length; i++)
@@ -242,24 +253,33 @@ cantrol.prototype.getUIConfig = function() {
                 let btn = 	{	  "id":key,
                     "element": "button",
                     "label": key,
-                    "doc": "TRANSLATE.TEST_BUTTON",
                     "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"system_controller/cantrol","method":"sendNumCom","data":value}}
                 };
+                if (i==0){
+                    btn["description"] = "TRANSLATE.TEST_BUTTON";
+                } else {
+                    btn["doc"] = "TRANSLATE.TEST_BUTTON";
+                }
                 uiconf["sections"][0].content.push(btn);
             }
-
+            first = true;
             for (const [key, value] of Object.entries(self.configJSON["Commands"]))
                 {
                     let txt = 	{	  "id":key+"TXT",
                         "element": "input",
                         "label": key,
-                        "doc": "TRANSLATE.CONFIGURE",
                         "value": value,
                         "visibleIf": {"field": "amplifier", "value": files.length+1},
                         "attributes": [
                             {"type": "number"}, {"min": 0}, {"max":127}
                           ]
                 };
+                if (first){
+                    txt["description"] = "TRANSLATE.TEST_BUTTON";
+                    first = false;
+                } else {
+                    txt["doc"] = "TRANSLATE.TEST_BUTTON";
+                }
                     uiconf["sections"][0].content.push(txt);
                 }
                 for (let i=0; i < self.configJSON["Sources"].length; i++)
@@ -269,10 +289,14 @@ cantrol.prototype.getUIConfig = function() {
                     let txt = 	{	  "id":key+"TXT",
                         "element": "input",
                         "label": key,
-                        "doc": "TRANSLATE.CONFIGURE",
                         "value": value,
                         "visibleIf": {"field": "amplifier", "value": files.length+1 }                    };
-                    uiconf["sections"][0].content.push(txt);
+                        if (i==0){
+                            txt["description"] = "TRANSLATE.TEST_BUTTON";
+                        } else {
+                            txt["doc"] = "TRANSLATE.TEST_BUTTON";
+                        }
+                        uiconf["sections"][0].content.push(txt);
                 }
                 for (let i=0; i < self.configJSON["Miscellaneous"].length; i++)
                 {
@@ -281,9 +305,13 @@ cantrol.prototype.getUIConfig = function() {
                     let txt = 	{	  "id":key+"TXT",
                         "element": "input",
                         "label": key,
-                        "doc": "TRANSLATE.CONFIGURE",
                         "value": value,
                         "visibleIf": {"field": "amplifier", "value": files.length+1 }                    };
+                        if (i==0){
+                            txt["description"] = "TRANSLATE.TEST_BUTTON";
+                        } else {
+                            txt["doc"] = "TRANSLATE.TEST_BUTTON";
+                        }
                     uiconf["sections"][0].content.push(txt);
                 }
 fs.writeFile(__dirname+"test.txt", JSON.stringify(uiconf,null,2), function(err) {
