@@ -317,7 +317,7 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 	};
 
 
-	ControllerPersonalRadio.prototype.getRootContent = function() {
+	cantrolcd.prototype.getRootContent = function() {
 		var self=this;
 		var response;
 	  
