@@ -68,7 +68,7 @@ cantrolcd.prototype.onStart = function() {
     return defer.promise;
 };
 
-cantrolcd.prototype.addResource() {
+cantrolcd.prototype.addResource = function() {
 	var self=this;
 
 	var nav = fs.readJsonSync(__dirname+'/navigation.json');
