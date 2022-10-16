@@ -15,7 +15,7 @@
             }
         }
     },
-    "controls": [
+    "controls": {
         "play": {
             "title": "Play",
             "uri": "cdplayer/play"
@@ -36,5 +36,5 @@
             "title": "backward",
             "uri": "cdplayer/backward"
         }
-    ]
+    }
 }
