@@ -1,4 +1,10 @@
 {
-  "PLUGIN_CONFIGURATION":"Example Plugin Configuration",
-  "SAVE":"Save"
+  "PLUGIN_CONFIGURATION": "CAntrolCD Configuration",
+  "SAVE": "Save",
+  "CDPLAYER_MODEL": "Model",
+  "CDPLAYER_MODEL_DOC": "Select the model of your CD player.",
+  "TEST_BUTTON": "Test command",
+  "CONFIGURE": "Configure command",
+  "CONFIG": "Configure",
+  "CDPLAYER": "CD-Player",
 }

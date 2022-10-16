@@ -1,0 +1,40 @@
+{
+    "baseNavigation": {
+        "navigation": {
+            "lists": [
+                {
+                    "availableListViews": [
+                        "list",
+                        "grid"
+                    ],
+                    "items": []
+                }
+            ],
+            "prev": {
+                "uri": "cdplayer"
+            }
+        }
+    },
+    "controls": [
+        "play": {
+            "title": "Play",
+            "uri": "cdplayer/play"
+        },
+        "pause": {
+            "title": "Pause",
+            "uri": "cdplayer/pause"
+        },
+        "stop": {
+            "title": "Stop",
+            "uri": "cdplayer/stop"
+        },
+        "forward": {
+            "title": "forward",
+            "uri": "cdplayer/forward"
+        },
+        "backward": {
+            "title": "backward",
+            "uri": "cdplayer/backward"
+        }
+    ]
+}

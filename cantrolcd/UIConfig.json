@@ -3,5 +3,32 @@
     "label": "TRANSLATE.PLUGIN_CONFIGURATION"
   },
   "sections": [
+    {
+      "id": "section_main",
+      "element": "section",
+      "label": "TRANSLATE.CDPLAYER",
+      "icon": "fa-plug",
+      "onSave": {
+        "type": "controller",
+        "endpoint": "music_service/cantrolcd",
+        "method": "saveSettings"
+      },
+      "saveButton": {
+        "label": "TRANSLATE.SAVE",
+        "data": [
+          "cdplayer"
+        ]
+      },
+      "content": [
+        {
+          "id": "cdplayer",
+          "element": "select",
+          "description": "TRANSLATE.CDPLAYER_MODEL_DOC",
+          "label": "TRANSLATE.CDPLAYER_MODEL",
+          "value": {},
+          "options": []
+        }
+      ]
+    }
   ]
 }

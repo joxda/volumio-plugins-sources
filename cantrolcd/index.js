@@ -15,7 +15,29 @@ function cantrolcd(context) {
 	this.commandRouter = this.context.coreCommand;
 	this.logger = this.context.logger;
 	this.configManager = this.context.configManager;
-
+	this.debug = true;
+    // Setup Debugger
+    self.logger.CAdebugCD = function (data, level) {
+        if(self.debug)
+        {
+        switch (level) {
+            case "info":
+                self.logger.info('[CAntrolCD Debug] ' + data);
+                break;
+            case "warn":
+                self.logger.warn('[CAntrolCD Debug] ' + data);
+                break;
+            case "debug":
+                self.logger.debug('[CAntrolCD Debug] ' + data);
+            default:
+                break;
+            }
+        };
+        if (level == "error")
+        {
+            self.logger.error('[CAntrolCD Debug] ' + data);
+        }
+    }
 }
 
 
@@ -26,6 +48,8 @@ cantrolcd.prototype.onVolumioStart = function()
 	var configFile=this.commandRouter.pluginManager.getConfigurationFile(this.context,'config.json');
 	this.config = new (require('v-conf'))();
 	this.config.loadFile(configFile);
+	let rdata = fs.readFileSync(__dirname+"/config.json");
+	self.configJSON = JSON.parse(rdata);
 
     return libQ.resolve();
 }
@@ -33,13 +57,27 @@ cantrolcd.prototype.onVolumioStart = function()
 cantrolcd.prototype.onStart = function() {
     var self = this;
 	var defer=libQ.defer();
+	self.control = true;
+	self.mpdPlugin = this.commandRouter.pluginManager.getPlugin('music_service','mpd');
+	self.addResource();
+	self.addToBrowseSources();
 
-
-	// Once the Plugin has successfull started resolve the promise
+	self.serviceName = "cantrolcd";
+  
 	defer.resolve();
-
     return defer.promise;
 };
+
+cantrolcd.prototype.addResource() {
+	var self=this;
+
+	var nav = fs.readJsonSync(__dirname+'/navigation.json');
+	var baseNavigation = nav.baseNavigation;
+
+	self.rootNavigation = JSON.parse(JSON.stringify(baseNavigation));
+	self.controlsn = JSON.parse(JSON.stringify(nav.controls));
+	self.rootNavigation.navigation.prev.uri = '/';
+}
 
 cantrolcd.prototype.onStop = function() {
     var self = this;
@@ -47,8 +85,7 @@ cantrolcd.prototype.onStop = function() {
 
     // Once the Plugin has successfull stopped resolve the promise
     defer.resolve();
-
-    return libQ.resolve();
+    return defer.promise;
 };
 
 cantrolcd.prototype.onRestart = function() {
@@ -56,7 +93,36 @@ cantrolcd.prototype.onRestart = function() {
     // Optional, use if you need it
 };
 
+cantrolcd.prototype.sendNumCom = function (com)
+{
+    var self = this;
+    // execute(pin, device, command, toggle, repeat)
+    self.logger.CAdebugCD('/usr/bin/python /data/plugins/music_service/cantrolcdcd/pygpio.py '+self.configJSON["output_pin"]+' '+self.configJSON["devNum"]+' '+com+' '+self.control+' '+self.configJSON["repeat"]+' '+self.configJSON["half_period"],'info');
+    execSync('/usr/bin/python /data/plugins/music_service/cantrolcdcd/pygpio.py '+self.configJSON["output_pin"]+' '+self.configJSON["devNum"]+' '+com+' '+self.control+' '+self.configJSON["repeat"]+' '+self.configJSON["half_period"], { uid: 1000, gid: 1000, encoding: 'utf8' });
+    // when settings are loaded use something like parseInt
+}
+	//send commands to the cd player
+    cantrolcd.prototype.sendCommand  = function(...cmd) {
+        var self = this;
+        var defer = libQ.defer();
+    
+        var cmdString = '';
+        self.logger.CAdebugCD("sendCommand: send " + cmd,'info');
 
+
+        if (self.configJSON)
+        {
+            let cmdo = self.configJSON[cmd];
+            // CHECK THAT IT IS VALID
+            
+            defer.resolve();
+        }
+        else {
+            defer.fail("no cd settings active");
+        }
+        
+        return defer.promise;
+    }
 // Configuration Methods -----------------------------------------------------------------------------
 
 cantrolcd.prototype.getUIConfig = function() {
@@ -70,12 +136,109 @@ cantrolcd.prototype.getUIConfig = function() {
         __dirname + '/UIConfig.json')
         .then(function(uiconf)
         {
+			var files = fs.readdirSync(__dirname+"/cdConfs").filter(fn => fn.endsWith(".json"));
 
+            self.cdName = self.configJSON['name'];
+	    self.logger.CAdebugCD(self.cdName,"error");
+            var opts = [];
 
+            var value = {};
+            for (let i=1; i <= files.length; i++)
+            {
+                self.logger.CAdebugCD(files[i-1],"error");
+                let rawdata = fs.readFileSync(__dirname+"/cdConfs/"+files[i-1]);
+                let cdJson = JSON.parse(rawdata);
+                self.logger.CAdebugCD(JSON.stringify(cdJson),"error");
+		self.logger.CAdebugCD(self.cdName,"error");
+                opts.push( { "value": i, "label": cdJson["name"]} );
+                if(self.cdName == cdJson["name"])
+                {
+                    value = {"value": i, "label": cdJson["name"]};
+                    self.configJSON = cdJson;
+                }
+            }
+            opts.push( { "value": files.length+1, "label": "TRANSLATE.CONFIG"+"..."} );
+
+            uiconf["sections"][0].content[0]["value"] = value;
+            uiconf["sections"][0].content[0]["options"] = opts;
+
+            //for (let i=0; i < self.ampJSON["Commands"].length; i++)
+            let first = true;
+            for (const [key, value] of Object.entries(self.configJSON["Commands"])) 
+            {
+                let btn = 	{	  "id":key,
+                    "element": "button",
+                    "label": key,
+                    "doc": "TRANSLATE.TEST_BUTTON",
+                    "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"music_service/cantrolcd","method":"sendNumCom","data":value}}
+                };
+                if (first){
+                    btn["description"] = "TRANSLATE.TEST_BUTTON";
+                    first = false;
+                } else {
+                    btn["doc"] = "TRANSLATE.TEST_BUTTON";
+                }
+                uiconf["sections"][0].content.push(btn);
+            }
+            
+            for (let i=0; i < self.configJSON["Miscellaneous"].length; i++)
+            {
+                let key = self.configJSON["Miscellaneous"][i]["name"];
+                let value = self.configJSON["Miscellaneous"][i]["code"];
+                let btn = 	{	  "id":key,
+                    "element": "button",
+                    "label": key,
+                    "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"music_service/cantrolcd","method":"sendNumCom","data":value}}
+                };
+                if (i==0){
+                    btn["description"] = "TRANSLATE.TEST_BUTTON";
+                } else {
+                    btn["doc"] = "TRANSLATE.TEST_BUTTON";
+                }
+                uiconf["sections"][0].content.push(btn);
+            }
+            first = true;
+            for (const [key, value] of Object.entries(self.configJSON["Commands"]))
+                {
+                    let txt = 	{	  "id":key+"TXT",
+                        "element": "input",
+                        "label": key,
+                        "value": value,
+                        "visibleIf": {"field": "cdplayer", "value": files.length+1},
+                        "attributes": [
+                            {"type": "number"}, {"min": 0}, {"max":127}
+                          ]
+                };
+                if (first){
+                    txt["description"] = "TRANSLATE.TEST_BUTTON";
+                    first = false;
+                } else {
+                    txt["doc"] = "TRANSLATE.TEST_BUTTON";
+                }
+                    uiconf["sections"][0].content.push(txt);
+                }
+                
+                for (let i=0; i < self.configJSON["Miscellaneous"].length; i++)
+                {
+                    let key = self.configJSON["Miscellaneous"][i]["name"];
+                    let value = self.configJSON["Miscellaneous"][i]["code"];
+                    let txt = 	{	  "id":key+"TXT",
+                        "element": "input",
+                        "label": key,
+                        "value": value,
+                        "visibleIf": {"field": "cdplayer", "value": files.length+1 }                    };
+                        if (i==0){
+                            txt["description"] = "TRANSLATE.TEST_BUTTON";
+                        } else {
+                            txt["doc"] = "TRANSLATE.TEST_BUTTON";
+                        }
+                    uiconf["sections"][0].content.push(txt);
+                }
             defer.resolve(uiconf);
-        })
-        .fail(function()
+	   } )
+        .fail((e) => 
         {
+            self.logger.error('Could not fetch CAntrol UI Configuration: ' + e);
             defer.reject(new Error());
         });
 
@@ -108,7 +271,14 @@ cantrolcd.prototype.setConf = function(varName, varValue) {
 
 
 cantrolcd.prototype.addToBrowseSources = function () {
-
+	var self = this;
+	let data = {
+	  name: 'CD PLAYER',
+	  uri: 'cdplayer',
+	  plugin_type: 'music_service',
+	  plugin_name: "cantrolcd",
+	  albumart: '/albumart?sourceicon=music_service/personal_radio/personal_radio.svg'
+	};
 	// Use this function to add your music service plugin to music sources
     //var data = {name: 'Spotify', uri: 'spotify',plugin_type:'music_service',plugin_name:'spop'};
     this.commandRouter.volumioAddToBrowseSources(data);
@@ -119,51 +289,90 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 
     //self.commandRouter.logger.info(curUri);
     var response;
+	if (curUri.startsWith('cdplayer')) {
+		if (curUri === 'cdplayer/play') {
+		  self.getRadioContent('kbs');
+		}
+		else if (curUri === 'cdplayer/stop') {
+		 self.getRadioContent('sbs');
+		}
+		else if (curUri === 'cdplayer/pause') {
+		 self.getRadioContent('mbc');
+		}
+		else if (curUri === 'cdplayer/forwards') {
+		 self.getRadioContent('linn');
+		}
+		else if (curUri === 'cdplayer/backwards') {
+		 self.getRadioContent('linn');
+		}
+		response = self.getRootContent();
+		
+	  }
+	
+	  return response
+		.fail(function (e) {
+		  self.logger.CAdebugCD('handleBrowseUri failed='+e,"error");
+		  libQ.reject(new Error());
+		});
+	};
 
 
-    return response;
-};
-
-
+	ControllerPersonalRadio.prototype.getRootContent = function() {
+		var self=this;
+		var response;
+	  
+		response = self.rootNavigation;
+		response.navigation.lists[0].items = [];
+		for (var key in self.controls) {
+			var cntrl = {
+			  service: self.serviceName,
+			  type: 'song',
+			  title: self.controls[key].title,
+			  uri: self.controls[key].uri,
+			  artist: '',
+			  album: '',
+			  albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
+			};
+			response.navigation.lists[0].items.push(radio);
+		}
+	  
+		return libQ.resolve(response);
+	  };
 
 // Define a method to clear, add, and play an array of tracks
 cantrolcd.prototype.clearAddPlayTrack = function(track) {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrolcd::clearAddPlayTrack');
-
-	self.commandRouter.logger.info(JSON.stringify(track));
-
-	return self.sendSpopCommand('uplay', [track.uri]);
+	var defer = libQ.defer();
+	return self.mpdPlugin.sendMpdCommand('stop', [])
+    .then(function() {
+        return self.mpdPlugin.sendMpdCommand('clear', []);
+    })
+    .then(function() {
+		self.sendCommand("play");
+        return libQ.resolve();
+    })
 };
 
 cantrolcd.prototype.seek = function (timepos) {
-    this.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrolcd::seek to ' + timepos);
-
-    return this.sendSpopCommand('seek '+timepos, []);
+	return libQ.resolve();
 };
 
 // Stop
 cantrolcd.prototype.stop = function() {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrolcd::stop');
-
-
+	self.sendCommand("stop");
 };
 
 // Spop pause
 cantrolcd.prototype.pause = function() {
 	var self = this;
-	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrolcd::pause');
-
-
+	self.sendCommand("pause");
 };
 
 // Get state
 cantrolcd.prototype.getState = function() {
 	var self = this;
 	self.commandRouter.pushConsoleMessage('[' + Date.now() + '] ' + 'cantrolcd::getState');
-
-
 };
 
 //Parse state
@@ -265,3 +474,11 @@ cantrolcd.prototype.goto=function(data){
 
      return defer.promise;
 };
+
+
+cantrolcd.prototype.saveSettings = function (data)
+{
+    var self = this;
+    let cdplayer = data['cdplayer']['value'];
+    self.logger.CAdebugCD(cdplayer, 'info');
+}

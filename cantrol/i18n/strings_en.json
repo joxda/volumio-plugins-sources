@@ -7,7 +7,7 @@
   "TEST_BUTTON": "Test command",
   "SOURCES": "Select source",
   "CONFIGURE": "Configure command",
-  "CONFIF": "Configure",
+  "CONFIG": "Configure",
   "CDPLAYER": "CD-Player",
   "CDPLAYER_DOC": "Select whether to control a CD Player as well"
 }

@@ -71,9 +71,6 @@ cantrol.prototype.onStart = function() {
     var self = this;
 	var defer=libQ.defer();
     self.control = true;
-    self.RA5_del = 889
-    self.outPin = 17;
-    self.repeat = 1;
     
 	self.loadAmpDefinitions()
     //initialize list of serial devices available to the system
@@ -314,11 +311,6 @@ cantrol.prototype.getUIConfig = function() {
                         }
                     uiconf["sections"][0].content.push(txt);
                 }
-fs.writeFile(__dirname+"test.txt", JSON.stringify(uiconf,null,2), function(err) {
-    if (err) {
-        console.log(err);
-    }
-});
             defer.resolve(uiconf);
 	   } )
         .fail((e) => 
