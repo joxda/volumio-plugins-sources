@@ -75,7 +75,7 @@ cantrolcd.prototype.addResource = function() {
 	var baseNavigation = nav.baseNavigation;
 
 	self.rootNavigation = JSON.parse(JSON.stringify(baseNavigation));
-	self.controlsn = JSON.parse(JSON.stringify(nav.controls));
+	self.controls = JSON.parse(JSON.stringify(nav.controls));
 	self.rootNavigation.navigation.prev.uri = '/';
 }
 
@@ -273,7 +273,7 @@ cantrolcd.prototype.setConf = function(varName, varValue) {
 cantrolcd.prototype.addToBrowseSources = function () {
 	var self = this;
 	let data = {
-	  name: 'CD PLAYER',
+	  name: 'CD Player',
 	  uri: 'cdplayer',
 	  plugin_type: 'music_service',
 	  plugin_name: "cantrolcd",
