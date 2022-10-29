@@ -333,7 +333,7 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 			  album: '',
 			  albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
 			};
-			response.navigation.lists[0].items.push(radio);
+			response.navigation.lists[0].items.push(cntrl);
 		}
 	  
 		return libQ.resolve(response);
