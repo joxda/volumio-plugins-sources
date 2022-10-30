@@ -167,8 +167,8 @@ cantrolcd.prototype.getUIConfig = function() {
             
             for (let i=0; i < self.configJSON["Commands"].length; i++)
             {
-                let key = self.configJSON["Miscellaneous"][i]["name"];
-                let value = self.configJSON["Miscellaneous"][i]["code"];
+                let key = self.configJSON["Commands"][i]["name"];
+                let value = self.configJSON["Commands"][i]["code"];
                 let btn = 	{	  "id":key,
                     "element": "button",
                     "label": key,
@@ -257,8 +257,9 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
     var response;
     let suburi = 'cdplayer/'
 	if (curUri.startsWith(suburi)) {
-        curUri = curUri.slice(suburi.length)	
-		for (var com in self.controls) {
+        curUri = curUri.slice(suburi.length);
+		let notFound = true;
+        for (var com in self.controls) {
             if (curUri == "play")
             {
                 self.mpdPlugin.sendMpdCommand('stop', []);
@@ -268,9 +269,16 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
             if(curUri == encodeURIComponent(com["name"]))
             {
                 this.sendNumCom(com["code"]);
+                notFound = false;
+                break;
             }
         }
-		response = self.getRootContent();
+        if (notFound)
+        {
+            response = libQ.reject();
+        } else {
+		    response = self.getRootContent();
+        }
 	  }
 	
 	  return response
