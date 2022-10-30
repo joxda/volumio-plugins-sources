@@ -326,11 +326,11 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 		for (var key in self.controls) {
 			var cntrl = {
 			  service: self.serviceName,
-			  type: 'song',
+			  type: 'folder',
 			  title: self.controls[key].title,
 			  uri: self.controls[key].uri,
-			  artist: '',
-			  album: '',
+			  //artist: '',
+			  //album: '',
 			  albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
 			};
 			response.navigation.lists[0].items.push(cntrl);
@@ -346,9 +346,9 @@ cantrolcd.prototype.clearAddPlayTrack = function(track) {
 	return self.mpdPlugin.sendMpdCommand('stop', [])
     .then(function() {
         return self.mpdPlugin.sendMpdCommand('clear', []);
-    })
+    }) // TBD use cantrol to select CD?!
     .then(function() {
-		self.sendCommand("play");
+		self.sendCommand("play"); // TBD TEST WHETHER IT COULD MAKE MORE SENSE TO USE FOLDER AMD THEN REROUTE STUFF?
         return libQ.resolve();
     })
 };
