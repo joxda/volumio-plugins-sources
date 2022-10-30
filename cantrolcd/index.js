@@ -287,6 +287,7 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
         {
             response = libQ.reject();
         } else {
+            self.logger.CAdebugCD("GOING TO ROOT COnTENT","error");
 		    response = self.getRootContent();
         }
     }
@@ -314,15 +315,15 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 	  
 		response = self.rootNavigation;
 		response.navigation.lists[0].items = [];
-		for (var key in self.controls) {
+		for (var com in self.controls) {
 			var cntrl = {
 			  service: self.serviceName,
 			  type: 'folder',
-			  title: self.controls[key].name,
-			  uri: encodeURIComponent(self.controls[key].name),
+			  title: com.name,
+			  uri: encodeURIComponent(com.name),
 			  //artist: '',
 			  //album: '',
-			  icon: self.controls[key].icon
+			  icon: com.icon
               //albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
 			};
 			response.navigation.lists[0].items.push(cntrl);
