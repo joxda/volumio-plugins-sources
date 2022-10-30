@@ -164,24 +164,8 @@ cantrolcd.prototype.getUIConfig = function() {
 
             //for (let i=0; i < self.ampJSON["Commands"].length; i++)
             let first = true;
-            for (const [key, value] of Object.entries(self.configJSON["Commands"])) 
-            {
-                let btn = 	{	  "id":key,
-                    "element": "button",
-                    "label": key,
-                    "doc": "TRANSLATE.TEST_BUTTON",
-                    "onClick": {"type":"emit", "message":"callMethod", "data":{"endpoint":"music_service/cantrolcd","method":"sendNumCom","data":value}}
-                };
-                if (first){
-                    btn["description"] = "TRANSLATE.TEST_BUTTON";
-                    first = false;
-                } else {
-                    btn["doc"] = "TRANSLATE.TEST_BUTTON";
-                }
-                uiconf["sections"][0].content.push(btn);
-            }
             
-            for (let i=0; i < self.configJSON["Miscellaneous"].length; i++)
+            for (let i=0; i < self.configJSON["Commands"].length; i++)
             {
                 let key = self.configJSON["Miscellaneous"][i]["name"];
                 let value = self.configJSON["Miscellaneous"][i]["code"];
@@ -198,30 +182,12 @@ cantrolcd.prototype.getUIConfig = function() {
                 uiconf["sections"][0].content.push(btn);
             }
             first = true;
-            for (const [key, value] of Object.entries(self.configJSON["Commands"]))
-                {
-                    let txt = 	{	  "id":key+"TXT",
-                        "element": "input",
-                        "label": key,
-                        "value": value,
-                        "visibleIf": {"field": "cdplayer", "value": files.length+1},
-                        "attributes": [
-                            {"type": "number"}, {"min": 0}, {"max":127}
-                          ]
-                };
-                if (first){
-                    txt["description"] = "TRANSLATE.TEST_BUTTON";
-                    first = false;
-                } else {
-                    txt["doc"] = "TRANSLATE.TEST_BUTTON";
-                }
-                    uiconf["sections"][0].content.push(txt);
-                }
+            
                 
-                for (let i=0; i < self.configJSON["Miscellaneous"].length; i++)
+                for (let i=0; i < self.configJSON["Commands"].length; i++)
                 {
-                    let key = self.configJSON["Miscellaneous"][i]["name"];
-                    let value = self.configJSON["Miscellaneous"][i]["code"];
+                    let key = self.configJSON["Commands"][i]["name"];
+                    let value = self.configJSON["Commands"][i]["code"];
                     let txt = 	{	  "id":key+"TXT",
                         "element": "input",
                         "label": key,
@@ -289,26 +255,22 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 
     //self.commandRouter.logger.info(curUri);
     var response;
-
-	if (curUri.startsWith('cdplayer')) {
-		if (curUri === 'cdplayer/play') {
-            self.mpdPlugin.sendMpdCommand('stop', [])
-            .then(function() {
-                return self.mpdPlugin.sendMpdCommand('clear', []);
-            }) // TBD use cantrol to select CD?!
-            .then(function() {
-                self.sendCommand("play"); // TBD TEST WHETHER IT COULD MAKE MORE SENSE TO USE FOLDER AMD THEN REROUTE STUFF?
-            })	}
-        else if (curUri === 'cdplayer/stop') {
-            self.sendCommand("stop");		}
-		else if (curUri === 'cdplayer/pause') {
-            self.sendCommand("pause");		}
-		else if (curUri === 'cdplayer/forwards') {
-            self.sendCommand("forwards");		}
-		else if (curUri === 'cdplayer/backwards') {
-            self.sendCommand("backwards");		}
+    let suburi = 'cdplayer/'
+	if (curUri.startsWith(suburi)) {
+        curUri = curUri.slice(suburi.length)	
+		for (var com in self.controls) {
+            if (curUri == "play")
+            {
+                self.mpdPlugin.sendMpdCommand('stop', []);
+                self.mpdPlugin.sendMpdCommand('clear', []);
+                // SEND TO CXA?
+            }
+            if(curUri == encodeURIComponent(com["name"]))
+            {
+                this.sendNumCom(com["code"]);
+            }
+        }
 		response = self.getRootContent();
-		
 	  }
 	
 	  return response
@@ -338,11 +300,11 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 			var cntrl = {
 			  service: self.serviceName,
 			  type: 'folder',
-			  title: self.controls[key].title,
-			  uri: self.controls[key].uri,
+			  title: self.controls[key].name,
+			  uri: encodeURIComponent(self.controls[key].name),
 			  //artist: '',
 			  //album: '',
-			  icon: 'fa fa-play'
+			  icon: self.controls[key].icon
               //albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
 			};
 			response.navigation.lists[0].items.push(cntrl);
