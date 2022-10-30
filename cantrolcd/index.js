@@ -322,11 +322,11 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 			var cntrl = {
 			  service: self.serviceName,
 			  type: 'folder',
-			  title: com.name,
-			  uri: encodeURIComponent(com.name),
+			  title: com["name"],
+			  uri: encodeURIComponent(com["name"]),
 			  //artist: '',
 			  //album: '',
-			  icon: com.icon
+			  icon: com["icon"]
               //albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
 			};
 			response.navigation.lists[0].items.push(cntrl);
