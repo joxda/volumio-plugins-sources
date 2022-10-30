@@ -277,7 +277,7 @@ cantrolcd.prototype.addToBrowseSources = function () {
 	  uri: 'cdplayer',
 	  plugin_type: 'music_service',
 	  plugin_name: "cantrolcd",
-	  icon: 'fa-play'
+	  icon: 'fa-compact-disc'
     };
 	// Use this function to add your music service plugin to music sources
     //var data = {name: 'Spotify', uri: 'spotify',plugin_type:'music_service',plugin_name:'spop'};
@@ -289,11 +289,9 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 
     //self.commandRouter.logger.info(curUri);
     var response;
-    self.logger.CAdebugCD("HANDLE URL: "+curUri, 'error');
 
 	if (curUri.startsWith('cdplayer')) {
 		if (curUri === 'cdplayer/play') {
-            self.logger.CAdebugCD("PLAY URI","error");
             self.mpdPlugin.sendMpdCommand('stop', [])
             .then(function() {
                 return self.mpdPlugin.sendMpdCommand('clear', []);
@@ -344,7 +342,8 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 			  uri: self.controls[key].uri,
 			  //artist: '',
 			  //album: '',
-			  albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
+			  icon: 'fa-play'
+              //albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
 			};
 			response.navigation.lists[0].items.push(cntrl);
 		}
@@ -403,7 +402,6 @@ cantrolcd.prototype.explodeUri = function(uri) {
 	var defer=libQ.defer();
 
 	// Mandatory: retrieve all info for a given URI
-    self.logger.CAdebugCD("THIS URL: "+uri, 'error');
 	return defer.promise;
 };
 
