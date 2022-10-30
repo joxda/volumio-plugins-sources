@@ -292,20 +292,15 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 	if (curUri.startsWith('cdplayer')) {
 		if (curUri === 'cdplayer/play') {
             self.logger.CAdebugCD("PLAY URI","error");
-            self.getRadioContent('kbs');
-		}
+            self.sendCommand("play");		}
 		else if (curUri === 'cdplayer/stop') {
-		 self.getRadioContent('sbs');
-		}
+            self.sendCommand("stop");		}
 		else if (curUri === 'cdplayer/pause') {
-		 self.getRadioContent('mbc');
-		}
+            self.sendCommand("pause");		}
 		else if (curUri === 'cdplayer/forwards') {
-		 self.getRadioContent('linn');
-		}
+            self.sendCommand("forwards");		}
 		else if (curUri === 'cdplayer/backwards') {
-		 self.getRadioContent('linn');
-		}
+            self.sendCommand("backwards");		}
 		response = self.getRootContent();
 		
 	  }
