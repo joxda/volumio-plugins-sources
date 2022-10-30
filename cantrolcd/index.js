@@ -318,15 +318,15 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
         self.logger.CAdebugCD(stringify(self.controls),"error");
 		for (var com in self.controls) {
             self.logger.CAdebugCD("LOOP","error");
-            self.logger.CAdebugCD(stringify(com),"error");
+            self.logger.CAdebugCD(stringify(self.controls[com]),"error");
 			var cntrl = {
 			  service: self.serviceName,
 			  type: 'folder',
-			  title: com["name"],
-			  uri: encodeURIComponent(com["name"]),
+			  title: self.controls[com]["name"],
+			  uri: encodeURIComponent(self.controls[com]["name"]),
 			  //artist: '',
 			  //album: '',
-			  icon: com["icon"]
+			  icon: self.controls[com]["icon"]
               //albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
 			};
 			response.navigation.lists[0].items.push(cntrl);
