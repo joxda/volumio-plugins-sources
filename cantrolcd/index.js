@@ -51,7 +51,7 @@ cantrolcd.prototype.onVolumioStart = function()
 	this.config.loadFile(configFile);
 	let rdata = fs.readFileSync(__dirname+"/config.json");
 	self.configJSON = JSON.parse(rdata);
-
+    self.controls = self.configJSON["commands"];
     return libQ.resolve();
 }
 
@@ -76,7 +76,7 @@ cantrolcd.prototype.addResource = function() {
 	var baseNavigation = nav.baseNavigation;
 
 	self.rootNavigation = JSON.parse(JSON.stringify(baseNavigation));
-	self.controls = JSON.parse(JSON.stringify(nav.controls));
+	//self.controls = JSON.parse(JSON.stringify(nav.controls));
 	self.rootNavigation.navigation.prev.uri = '/';
 }
 

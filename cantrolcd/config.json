@@ -1,3 +1,159 @@
 {
-    "name": "CXC"
+    "name": "CXC",
+    "devNum": 16,
+    "repeat": 1,
+    "half_period": 889,
+    "output_pin": 17,
+    "Commands": [
+        {
+            "name": "On/Off",
+            "code": 12,
+            "icon": "fa power-off"
+        },
+        {
+            "name": "Play",
+            "code": 53,
+            "icon": "fa fa-play"
+        },
+        {
+            "name": "Pause",
+            "code": 48,
+            "icon": "fa fa-pause"
+        },
+        {
+            "name": "Random",
+            "code": 28,
+            "icon": "fa fa-shuffle"
+        },
+        {
+            "name": "Repeat",
+            "code": 29,
+            "icon": "fa fa-repeat"
+        },
+        {
+            "name": "Skip forward",
+            "code": 32,
+            "icon": "fa fa-forward-step"
+        },
+        {
+            "name": "Skip backward",
+            "code": 33,
+            "icon": "fa fa-backward-step"
+        },
+        {
+            "name": "Stop",
+            "code": 54,
+            "icon": "fa fa-stop"
+        },
+        {
+            "name": "0",
+            "code": 0,
+            "icon": "fa 0"
+        },
+        {
+            "name": "1",
+            "code": 1,
+            "icon": "fa 1"
+        },
+        {
+            "name": "2",
+            "code": 2,
+            "icon": "fa 2"
+        },
+        {
+            "name": "3",
+            "code": 3,
+            "icon": "fa 3"
+        },
+        {
+            "name": "4",
+            "code": 4,
+            "icon": "fa 4"
+        },
+        {
+            "name": "5",
+            "code": 5,
+            "icon": "fa 5"
+        },
+        {
+            "name": "6",
+            "code": 6,
+            "icon": "fa 6"
+        },
+        {
+            "name": "7",
+            "code": 7,
+            "icon": "fa 7"
+        },
+        {
+            "name": "8",
+            "code": 8,
+            "icon": "fa 9"
+        },
+        {
+            "name": "9",
+            "code": 9,
+            "icon": "fa 9"
+        },
+        {
+            "name": "-/--_10+",
+            "code": 14,
+            "icon": "fa fa-plus"
+        },
+        {
+            "name": "LCD_Bright",
+            "code": 18,
+            "icon": "fa fa-lightbulb-on"
+        },
+        {
+            "name": "LCD_Dim",
+            "code": 19,
+            "icon": "fa fa-lightbulb"
+        },
+        {
+            "name": "LCD_Off",
+            "code": 71,
+            "icon": "fa fa-lightbulb-slash"
+        },
+        {
+            "name": "Info",
+            "code": 21,
+            "icon": "fa info"
+        },
+        {
+            "name": "Prog",
+            "code": 36,
+            "icon": "fa fa-binary"
+        },
+        {
+            "name": ">>",
+            "code": 43,
+            "icon": "fa fa-forward"
+        },
+        {
+            "name": "<<",
+            "code": 44,
+            "icon": "fa fa-backward"
+        },
+        {
+            "name": "Eject",
+            "code": 45,
+            "icon": "fa eject"
+        },
+        {
+            "name": "Menu",
+            "code": 52,
+            "icon": "fa fa-bars"
+        },
+        {
+            "name": "Remain",
+            "code": 61,
+            "icon": "fa fa-stopwatch"
+        },
+        {
+            "name": "Select/Enter",
+            "code": 87,
+            "icon": "fa fa-check"
+        }
+    ]
 }
