@@ -291,7 +291,7 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
     var response;
 	if (curUri.startsWith('cdplayer')) {
 		if (curUri === 'cdplayer/play') {
-            self.CAdebugCD("PLAY URI","error");
+            self.logger.CAdebugCD("PLAY URI","error");
             self.getRadioContent('kbs');
 		}
 		else if (curUri === 'cdplayer/stop') {
@@ -398,7 +398,7 @@ cantrolcd.prototype.explodeUri = function(uri) {
 	var defer=libQ.defer();
 
 	// Mandatory: retrieve all info for a given URI
-    self.CAdebugCD("THIS URL: "+uri, 'error');
+    self.logger.CAdebugCD("THIS URL: "+uri, 'error');
 	return defer.promise;
 };
 
