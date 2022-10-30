@@ -277,7 +277,7 @@ cantrolcd.prototype.addToBrowseSources = function () {
 	  uri: 'cdplayer',
 	  plugin_type: 'music_service',
 	  plugin_name: "cantrolcd",
-	  icon: 'fa-light fa-compact-disc'
+	  icon: 'fa fa-compact-disc'
     };
 	// Use this function to add your music service plugin to music sources
     //var data = {name: 'Spotify', uri: 'spotify',plugin_type:'music_service',plugin_name:'spop'};
@@ -342,7 +342,7 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 			  uri: self.controls[key].uri,
 			  //artist: '',
 			  //album: '',
-			  icon: 'fa-solid fa-play'
+			  icon: 'fa fa-play'
               //albumart: '/albumart?sourceicon=music_service/personal_radio/logos/'+key+'.png'
 			};
 			response.navigation.lists[0].items.push(cntrl);
