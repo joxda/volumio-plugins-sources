@@ -316,6 +316,8 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 		response = self.rootNavigation;
 		response.navigation.lists[0].items = [];
 		for (var com in self.controls) {
+            self.logger.CAdebugCD("LOOP","error");
+            self.logger.CAdebugCD(stringify(com),"error");
 			var cntrl = {
 			  service: self.serviceName,
 			  type: 'folder',
