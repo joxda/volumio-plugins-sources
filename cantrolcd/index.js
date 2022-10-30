@@ -277,8 +277,8 @@ cantrolcd.prototype.addToBrowseSources = function () {
 	  uri: 'cdplayer',
 	  plugin_type: 'music_service',
 	  plugin_name: "cantrolcd",
-	  albumart: '/albumart?sourceicon=music_service/personal_radio/personal_radio.svg'
-	};
+	  icon: 'fa-play'
+    };
 	// Use this function to add your music service plugin to music sources
     //var data = {name: 'Spotify', uri: 'spotify',plugin_type:'music_service',plugin_name:'spop'};
     this.commandRouter.volumioAddToBrowseSources(data);

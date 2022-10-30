@@ -1,0 +1,97 @@
+{
+    "name": "640T",
+    "devNum": 17,
+    "repeat": 1,
+    "half_period": 889,
+    "output_pin": 17,
+    "Commands": {
+        "Power_On": 102,
+        "Power_Off": 103
+    },
+    "Miscellaneous": [
+        {
+            "name": "Preset 1",
+            "code": 91
+        },
+        {
+            "name": "Preset 2",
+            "code": 92
+        },
+        {
+            "name": "Preset 3",
+            "code": 93
+        },
+        {
+            "name": "Preset 4",
+            "code": 94
+        },
+        {
+            "name": "Preset 5",
+            "code": 95
+        },
+        {
+            "name": "Preset 6",
+            "code": 96
+        },
+        {
+            "name": "Preset 7",
+            "code": 97
+        },
+        {
+            "name": "Preset 8",
+            "code": 98
+        },
+        {
+            "name": "Preset 9",
+            "code": 99
+        },
+        {
+            "name": "Preset 10",
+            "code": 100
+        },
+        {
+            "name": "Preset 10+",
+            "code": 118
+        },
+        {
+            "name": "Scroll up",
+            "code": 77
+        },
+        {
+            "name": "Scroll down",
+            "code": 78
+        },
+        {
+            "name": "Brightness",
+            "code": 71
+        },
+        {
+            "name": "Autotune",
+            "code": 117
+        },
+        {
+            "name": "Info",
+            "code": 121
+        },
+        {
+            "name": "FM/DAB",
+            "code": 101
+        },
+        {
+            "name": "Alarm",
+            "code": 125
+        },
+        {
+            "name": "NCT",
+            "code": 123
+        },
+        {
+            "name": "Preset/scan toggle",
+            "code": 110
+        },
+        {
+            "name": "Store",
+            "code": 119
+        }
+    ]
+}

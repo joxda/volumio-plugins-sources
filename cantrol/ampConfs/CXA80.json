@@ -123,3 +123,95 @@
 		}
 	]
 }
+
+
+
+/*
+    'CXC': {
+        '0': 0,
+'1': 1,
+'2': 2,
+'3': 3,
+'4': 4,
+'5': 5,
+'6': 6,
+'7': 7,
+'8': 8,
+'9': 9,
+'Power_Toggle': 12,
+'Power_On': 50,
+'Power_Off': 51,
+'-/--_10+': 14,
+'LCD_Bright': 18,
+'LCD_Dim': 19,
+'LCD_Off': 71,
+'Brightness_Toggle': 72,
+'Info': 21,
+'Play/Pause': 24,
+'Play': 53,
+'Pause': 48,
+'Random': 28,
+'Repeat': 29,
+'Skip_right': 32,
+'Skip_left': 33,
+'Prog': 36,
+'>>': 43,
+'<<': 44,
+'Eject': 45,
+'Menu': 52,
+'Stop': 54,
+'Remain': 61,
+'Select/Enter': 87
+	},
+
+
+
+    '640T': {
+        'Power': 124,
+'Brightness': 71,
+'Auto_Tune': 117,
+'Mute': 116,
+'Preset_1': 91,
+'Preset_2': 92,
+'Preset_3': 93,
+'Preset_4': 94,
+'Preset_5': 95,
+'Preset_6': 96,
+'Preset_7': 97,
+'Preset_8': 98,
+'Preset_9': 99,
+'Preset_10': 100,
+'Scroll_Up': 77,
+'Scroll_Down': 78,
+'Select': 87,
+'Info': 121,
+'FM/DAB': 101,
+'Alarm': 125
+	}
+}
+# dictionary of possible commands, mapped to the code we need to send
+cmd = {
+        'aux': 4,
+        'cd': 5,
+        'tuner': 3,
+        'dvd': 1,
+        'av': 2,
+        'tapemon': 0,
+        'vol-': 17,
+        'vol+': 16,
+        'volup': 17,
+        'voldown': 16,
+        'mute': 13,
+        'standby': 12,
+        'bright': 18,
+        'source+': 19,
+        'source-': 20,
+        'sourcenext': 19,
+        'sourceprev': 20,
+        'clipoff': 21,
+        'clipon': 22,
+        'muteon': 50,
+        'muteoff': 51,
+        'ampon': 14,
+        'ampoff': 15
+} */
