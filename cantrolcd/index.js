@@ -257,9 +257,12 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 
     //self.commandRouter.logger.info(curUri);
     var response;
-    let suburi = 'cdplayer/';
-	if (curUri.startsWith(suburi)) {
+    let suburi = "cdplayer/";
+
+    self.logger.CAdebugCD(suburi,"error");
+	if (curUri.startsWith("cdplayer")) {
         curUri = curUri.slice(suburi.length);
+        self.logger.CAdebugCD(curUri,"error");
 		let notFound = true;
         for (var com in self.controls) {
             if (curUri == "play")
