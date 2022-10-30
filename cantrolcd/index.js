@@ -289,11 +289,19 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 
     //self.commandRouter.logger.info(curUri);
     var response;
+    self.logger.CAdebugCD("HANDLE URL: "+curUri, 'error');
+
 	if (curUri.startsWith('cdplayer')) {
 		if (curUri === 'cdplayer/play') {
             self.logger.CAdebugCD("PLAY URI","error");
-            self.sendCommand("play");		}
-		else if (curUri === 'cdplayer/stop') {
+            self.mpdPlugin.sendMpdCommand('stop', [])
+            .then(function() {
+                return self.mpdPlugin.sendMpdCommand('clear', []);
+            }) // TBD use cantrol to select CD?!
+            .then(function() {
+                self.sendCommand("play"); // TBD TEST WHETHER IT COULD MAKE MORE SENSE TO USE FOLDER AMD THEN REROUTE STUFF?
+            })	}
+        else if (curUri === 'cdplayer/stop') {
             self.sendCommand("stop");		}
 		else if (curUri === 'cdplayer/pause') {
             self.sendCommand("pause");		}
@@ -312,7 +320,16 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 		});
 	};
 
-
+    /*var self = this;
+	var defer = libQ.defer();
+	return self.mpdPlugin.sendMpdCommand('stop', [])
+    .then(function() {
+        return self.mpdPlugin.sendMpdCommand('clear', []);
+    }) // TBD use cantrol to select CD?!
+    .then(function() {
+		self.sendCommand("play"); // TBD TEST WHETHER IT COULD MAKE MORE SENSE TO USE FOLDER AMD THEN REROUTE STUFF?
+        return libQ.resolve();
+    })*/
 	cantrolcd.prototype.getRootContent = function() {
 		var self=this;
 		var response;
@@ -337,16 +354,7 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 
 // Define a method to clear, add, and play an array of tracks
 cantrolcd.prototype.clearAddPlayTrack = function(track) {
-	var self = this;
-	var defer = libQ.defer();
-	return self.mpdPlugin.sendMpdCommand('stop', [])
-    .then(function() {
-        return self.mpdPlugin.sendMpdCommand('clear', []);
-    }) // TBD use cantrol to select CD?!
-    .then(function() {
-		self.sendCommand("play"); // TBD TEST WHETHER IT COULD MAKE MORE SENSE TO USE FOLDER AMD THEN REROUTE STUFF?
-        return libQ.resolve();
-    })
+	return libQ.resolve();
 };
 
 cantrolcd.prototype.seek = function (timepos) {
@@ -355,14 +363,16 @@ cantrolcd.prototype.seek = function (timepos) {
 
 // Stop
 cantrolcd.prototype.stop = function() {
-	var self = this;
-	self.sendCommand("stop");
+    return libQ.resolve();
+	//var self = this;
+	//self.sendCommand("stop");
 };
 
 // Spop pause
 cantrolcd.prototype.pause = function() {
-	var self = this;
-	self.sendCommand("pause");
+	//var self = this;
+	//self.sendCommand("pause");
+    return libQ.resolve();
 };
 
 // Get state
