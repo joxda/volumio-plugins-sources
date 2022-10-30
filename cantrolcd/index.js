@@ -263,7 +263,12 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 	if (curUri.startsWith("cdplayer")) {
         curUri = curUri.slice(suburi.length);
         self.logger.CAdebugCD(curUri,"error");
+        
 		let notFound = true;
+        if(curUri == "" || curUri == "cdplayer")
+        {
+            notFound = false;
+        }
         for (var com in self.controls) {
             if (curUri == "play")
             {

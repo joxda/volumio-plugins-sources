@@ -10,12 +10,6 @@
             "code": 12,
             "icon": "fa power-off"
         },
-        //        "Power_Toggle": 12,
-        //{
-        //    "name": "Off",
-        //    "code": 51,
-        //    "icon":
-        //},
         {
             "name": "Play",
             "code": 53,
@@ -111,10 +105,6 @@
             "code": 18,
             "icon": "fa fa-lightbulb-on"
         },
-        /*{
-            "name": "Brightness_Toggle",
-            "code": 72
-        },*/
         {
             "name": "LCD_Dim",
             "code": 19,
