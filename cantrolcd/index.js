@@ -51,7 +51,6 @@ cantrolcd.prototype.onVolumioStart = function()
 	this.config.loadFile(configFile);
 	let rdata = fs.readFileSync(__dirname+"/config.json");
 	self.configJSON = JSON.parse(rdata);
-    self.controls = self.configJSON["commands"];
     return libQ.resolve();
 }
 
@@ -64,7 +63,8 @@ cantrolcd.prototype.onStart = function() {
 	self.addToBrowseSources();
 
 	self.serviceName = "cantrolcd";
-  
+    self.controls = self.configJSON["commands"];
+
 	defer.resolve();
     return defer.promise;
 };
@@ -315,6 +315,7 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 	  
 		response = self.rootNavigation;
 		response.navigation.lists[0].items = [];
+        self.logger.CAdebugCD(stringify(self.controls),"error");
 		for (var com in self.controls) {
             self.logger.CAdebugCD("LOOP","error");
             self.logger.CAdebugCD(stringify(com),"error");
