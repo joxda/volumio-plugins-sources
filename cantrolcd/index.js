@@ -63,7 +63,7 @@ cantrolcd.prototype.onStart = function() {
 	self.addToBrowseSources();
 
 	self.serviceName = "cantrolcd";
-    self.controls = self.configJSON["commands"];
+    self.controls = self.configJSON["Commands"];
 
 	defer.resolve();
     return defer.promise;
