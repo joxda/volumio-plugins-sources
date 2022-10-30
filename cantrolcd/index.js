@@ -2,6 +2,7 @@
 
 var libQ = require('kew');
 var fs=require('fs-extra');
+const { stringify } = require('querystring');
 var config = new (require('v-conf'))();
 var exec = require('child_process').exec;
 var execSync = require('child_process').execSync;
@@ -200,6 +201,7 @@ cantrolcd.prototype.getUIConfig = function() {
                         }
                     uiconf["sections"][0].content.push(txt);
                 }
+                self.logger.CAdebugCD(stringify(uiconf),"error");
             defer.resolve(uiconf);
 	   } )
         .fail((e) => 
@@ -255,7 +257,7 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
 
     //self.commandRouter.logger.info(curUri);
     var response;
-    let suburi = 'cdplayer/'
+    let suburi = 'cdplayer/';
 	if (curUri.startsWith(suburi)) {
         curUri = curUri.slice(suburi.length);
 		let notFound = true;
@@ -279,14 +281,14 @@ cantrolcd.prototype.handleBrowseUri = function (curUri) {
         } else {
 		    response = self.getRootContent();
         }
-	  }
+    }
 	
-	  return response
-		.fail(function (e) {
+	return response
+	    .fail(function (e) {
 		  self.logger.CAdebugCD('handleBrowseUri failed='+e,"error");
 		  libQ.reject(new Error());
 		});
-	};
+};
 
     /*var self = this;
 	var defer = libQ.defer();
